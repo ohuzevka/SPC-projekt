@@ -1,0 +1,45 @@
+#include <iostream>
+
+#include "SerialTerminal.h"
+
+
+using std::cout;
+using std::endl;
+
+int main(int argc, char* argv[])
+{
+	SerialTerminal serial;
+
+	try
+	{
+		serial.CreateConnection("COM3", CBR_115200, NOPARITY, 8, ONESTOPBIT);
+	}
+	catch (SerialTerminalErr err)
+	{
+		if (err == CREATE_FILE_ERR)
+			cout << "Create connection to serial port failed" << endl;
+		if (err == GET_COMM_STATE_ERR)
+			cout << "Get serial port state failed" << endl;
+		if (err == SET_COMM_STATE_ERR)
+			cout << "Set serial port parameters failed" << endl;
+
+		return 1;
+	}
+	catch (...)
+	{
+		cout << "Unknown error" << endl;
+
+		return 1;
+	}
+
+	serial.Clear(WHITE);
+	
+	serial.SetPos(0, 0);
+	serial.Cursor(CYAN, false, true, true);
+	serial.Print('A', RED, GREEN);
+	serial.Print('H', MAGENTA, YELLOW);
+	serial.Print('O', WHITE,BLACK);
+	serial.Print('J', RED, BLUE);
+	
+	return 0;
+}
