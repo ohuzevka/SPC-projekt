@@ -1,5 +1,8 @@
 #pragma once
 
+#define DISPLAY_WIDTH 79
+#define DISPLAY_HEIGHT 39
+
 #define WRITE_CHAR 'c'
 #define SET_POS	'p'
 #define CURSOR 's'
@@ -21,7 +24,6 @@
 #define TEXT_BLINK 7
 
 #define SUCCESS 'A'
-#define ERROR 'N'
 
 #define BLACK 0b000
 #define WHITE 0b111
