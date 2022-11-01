@@ -180,3 +180,22 @@ void SerialTerminal::Print(char character, uint8_t background, uint8_t text)
 	// TODO: handle error when terminal returns error
 
 }
+
+bool SerialTerminal::Print(const char* str, uint8_t background, uint8_t text)
+{
+	for (int i = 0; i < strlen(str); i++)
+	{
+		uint8_t buf[4] = { WRITE_CHAR, str[i], background | text << TEXT_COLOR, CRC};
+		try 
+		{
+			Write(buf);
+		}
+		catch (SerialTerminalErr WRITE_ERR)
+		{
+			cout << "Unable to write string: " << str << endl;
+			return false;
+		}
+	}
+
+	return true;
+}

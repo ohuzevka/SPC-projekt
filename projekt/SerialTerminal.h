@@ -45,5 +45,7 @@ public:
 	void Cursor(uint8_t colour, bool mode, bool blink, bool visible);
 
 	void Print(char character, uint8_t background, uint8_t text);
+
+	bool Print(const char* str, uint8_t background, uint8_t text);
 };
 
