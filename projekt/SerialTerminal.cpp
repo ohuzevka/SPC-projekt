@@ -181,7 +181,7 @@ void SerialTerminal::Print(char character, uint8_t background, uint8_t text)
 
 }
 
-bool SerialTerminal::Print(const char* str, uint8_t background, uint8_t text)
+void SerialTerminal::Print(const char* str, uint8_t background, uint8_t text)
 {
 	for (int i = 0; i < strlen(str); i++)
 	{
@@ -193,9 +193,8 @@ bool SerialTerminal::Print(const char* str, uint8_t background, uint8_t text)
 		catch (SerialTerminalErr WRITE_ERR)
 		{
 			cout << "Unable to write string: " << str << endl;
-			return false;
+			return;
 		}
 	}
 
-	return true;
 }

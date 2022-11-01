@@ -46,6 +46,6 @@ public:
 
 	void Print(char character, uint8_t background, uint8_t text);
 
-	bool Print(const char* str, uint8_t background, uint8_t text);
+	void Print(const char* str, uint8_t background, uint8_t text);
 };
 
