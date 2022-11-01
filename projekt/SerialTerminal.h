@@ -36,6 +36,8 @@ public:
 
 	void Read(uint8_t* val);
 
+	void Read(char val);
+
 	void Clear();
 
 	void Clear(uint8_t colour);

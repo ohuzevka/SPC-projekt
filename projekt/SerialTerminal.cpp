@@ -62,17 +62,21 @@ void SerialTerminal::Write(uint8_t val[])
 {
 	DWORD numberOfBytesWritten;
 
-	WriteFile(hComm, val, 4, &numberOfBytesWritten, NULL);
+	if (WriteFile(hComm, val, 4, &numberOfBytesWritten, NULL))
+		throw WRITE_ERR;
 
 	if (numberOfBytesWritten != 4)
 		throw WRITE_ERR;
+
+	Read(val[1]);
 }
 
 void SerialTerminal::Write(uint8_t val[], DWORD number)
 {
 	DWORD numberOfBytesWritten;
 
-	WriteFile(hComm, val, number, &numberOfBytesWritten, NULL);
+	if (WriteFile(hComm, val, number, &numberOfBytesWritten, NULL))
+		throw WRITE_ERR;
 
 	if (numberOfBytesWritten != number)
 		throw WRITE_ERR;
@@ -82,12 +86,27 @@ void SerialTerminal::Read(uint8_t* val)
 {
 	DWORD numberOfBytesReaded;
 
-	ReadFile(hComm, val, 1, &numberOfBytesReaded, NULL);
-
-	cout << *val << endl;
+	if(!ReadFile(hComm, val, 1, &numberOfBytesReaded, NULL))
+		throw READ_ERR;
 
 	if (numberOfBytesReaded != 1);
-		//throw READ_ERR;
+		throw READ_ERR;
+}
+
+void SerialTerminal::Read(char val)
+{
+	DWORD numberOfBytesReaded;
+
+	char buf[2];
+
+	if (!ReadFile(hComm, buf, 2, &numberOfBytesReaded, NULL))
+		throw READ_ERR;
+
+	if (numberOfBytesReaded != 2)
+		throw READ_ERR;
+
+	if (buf[1] != SUCCESS || buf[2] != val)
+		throw READ_ERR;
 }
 
 void SerialTerminal::Clear()
@@ -95,16 +114,6 @@ void SerialTerminal::Clear()
 	uint8_t buf[4] = { ERASE, EMPTY, EMPTY, CRC};
 
 	Write(buf);
-
-	uint8_t resp[2];
-	Read(&resp[0]);
-	Read(&resp[1]);
-
-	if (resp[0] == SUCCESS && resp[1] == ERASE)
-		return;
-
-	// TODO: handle error when terminal returns error
-
 }
 
 void SerialTerminal::Clear(uint8_t colour)
@@ -113,16 +122,6 @@ void SerialTerminal::Clear(uint8_t colour)
 	uint8_t buf[4] = { ERASE, EMPTY, EMPTY, CRC };
 
 	Write(buf);
-
-	uint8_t resp[2];
-	Read(&resp[0]);
-	Read(&resp[1]);
-
-	if (resp[0] == SUCCESS && resp[1] == ERASE)
-		return;
-
-	// TODO: handle error when terminal returns error
-
 }
 
 void SerialTerminal::SetPos(uint8_t x, uint8_t y)
@@ -131,15 +130,8 @@ void SerialTerminal::SetPos(uint8_t x, uint8_t y)
 
 	Write(buf);
 
-	uint8_t resp[2];
-	Read(&resp[0]);
-	Read(&resp[1]);
-
-	if (resp[0] == SUCCESS && resp[1] == SET_POS)
-		return;
-
-	// TODO: handle error when terminal returns error
-
+	actX = x;
+	actY = y;
 }
 
 void SerialTerminal::Cursor(uint8_t colour, bool mode, bool blink, bool visible)
@@ -155,13 +147,6 @@ void SerialTerminal::Cursor(uint8_t colour, bool mode, bool blink, bool visible)
 	uint8_t buf[4] = { CURSOR, colour | mode << CURSOR_MODE | blink << CURSOR_BLINK | visible << CURSOR_SHOW, EMPTY, CRC };
 
 	Write(buf);
-
-	uint8_t resp[2];
-	Read(&resp[0]);
-	Read(&resp[1]);
-
-	if (resp[0] == SUCCESS && resp[1] == SET_POS)
-		return;
 }
 
 void SerialTerminal::Print(char character, uint8_t background, uint8_t text)
@@ -170,15 +155,12 @@ void SerialTerminal::Print(char character, uint8_t background, uint8_t text)
 
 	Write(buf);
 
-	uint8_t resp[2];
-	Read(&resp[0]);
-	Read(&resp[1]);
-
-	if (resp[0] == SUCCESS && resp[1] == WRITE_CHAR)
-		return;
-
-	// TODO: handle error when terminal returns error
-
+	++actX;
+	if (actX > DISPLAY_WIDTH)
+	{
+		actX = 0;
+		++actY;
+	}
 }
 
 void SerialTerminal::Print(const char* str, uint8_t background, uint8_t text)
