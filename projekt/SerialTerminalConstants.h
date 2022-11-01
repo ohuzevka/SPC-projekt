@@ -29,5 +29,5 @@
 #define GREEN 0b010
 #define BLUE 0b100
 #define YELLOW 0b011
-#define MAGENTA 0b110
-#define CYAN 0b101
+#define MAGENTA 0b101
+#define CYAN 0b110

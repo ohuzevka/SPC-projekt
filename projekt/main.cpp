@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
 	serial.Clear(WHITE);
 	
 	serial.SetPos(0, 0);
-	serial.Cursor(CYAN, false, true, true);
+	serial.Cursor(BLUE, false, true, true);
 	serial.Print('A', RED, GREEN);
 	serial.Print('H', MAGENTA, YELLOW);
 	serial.Print('O', WHITE,BLACK);
