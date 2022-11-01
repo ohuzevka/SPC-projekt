@@ -62,13 +62,13 @@ void SerialTerminal::Write(uint8_t val[])
 {
 	DWORD numberOfBytesWritten;
 
-	if (WriteFile(hComm, val, 4, &numberOfBytesWritten, NULL))
+	if (!WriteFile(hComm, val, 4, &numberOfBytesWritten, NULL))
 		throw WRITE_ERR;
 
 	if (numberOfBytesWritten != 4)
 		throw WRITE_ERR;
 
-	Read(val[1]);
+	Read(val[0]);
 }
 
 void SerialTerminal::Write(uint8_t val[], DWORD number)
@@ -105,7 +105,7 @@ void SerialTerminal::Read(char val)
 	if (numberOfBytesReaded != 2)
 		throw READ_ERR;
 
-	if (buf[1] != SUCCESS || buf[2] != val)
+	if (buf[0] != SUCCESS || buf[1] != val)
 		throw READ_ERR;
 }
 
