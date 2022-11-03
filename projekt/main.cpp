@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
 
 	serial.Clear(WHITE);
 	
-	serial.SetPos(0, 0);
+	serial.SetPos(DISPLAY_WIDTH, DISPLAY_HEIGHT);
 	serial.Cursor(BLUE, false, true, true);
 	serial.Print("Hello", BLACK, CYAN);
 	

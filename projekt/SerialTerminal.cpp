@@ -177,6 +177,21 @@ void SerialTerminal::Print(const char* str, uint8_t background, uint8_t text)
 			cout << "Unable to write string: " << str << endl;
 			return;
 		}
-	}
 
+		if (str[i] == '\n')
+		{
+			actX = 0;
+			++actY;
+		}
+		else
+		{
+			++actX;
+			if (actX > DISPLAY_WIDTH)
+			{
+				actX = 0;
+				++actY;
+			}
+		}
+
+	}
 }
