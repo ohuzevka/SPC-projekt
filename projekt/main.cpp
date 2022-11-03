@@ -1,20 +1,18 @@
 #include <iostream>
-
-#include "SerialTerminal.h"
-#include "WindowsTerminal.h"
-
+#include "Game.h"
 
 using std::cout;
 using std::endl;
 
 int main(int argc, char* argv[])
 {
-#if 0	// Serial terminal
-	SerialTerminal serial;
+	Game game;
 
+	// Select output terminal in Game.h
+#ifdef SERIAL_TERMINAL	// Serial terminal
 	try
 	{
-		serial.CreateConnection("COM3", CBR_115200, NOPARITY, 8, ONESTOPBIT);
+		game.serial.CreateConnection("COM3", CBR_115200, NOPARITY, 8, ONESTOPBIT);
 	}
 	catch (SerialTerminalErr err)
 	{
@@ -34,19 +32,18 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	serial.Clear(WHITE);
+	game.serial.Clear(WHITE);
 	
-	serial.SetPos(DISPLAY_WIDTH, DISPLAY_HEIGHT);
-	serial.Cursor(BLUE, false, true, true);
-	serial.Print("Hello", BLACK, CYAN);
+	game.serial.SetPos(DISPLAY_WIDTH, DISPLAY_HEIGHT);
+	game.serial.Cursor(BLUE, false, true, true);
+	game.serial.Print("Hello", BLACK, CYAN);
 #endif	// Serial terminal
 
-#if 1	// windows terminal
-	WindowsTerminal windows;
+#ifdef WINDOWS_TERMINAL	// windows terminal	WindowsTerminal windows;
 		
-	windows.SetPos(0, 0);
+	game.windows.SetPos(0, 0);
 	cout << "Hello";
-	windows.SetPos(DISPLAY_WIDTH, DISPLAY_HEIGHT);
+	game.windows.SetPos(DISPLAY_WIDTH, DISPLAY_HEIGHT);
 	cout << "H";
 	
 #endif	// windows terminal
