@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "SerialTerminal.h"
+#include "WindowsTerminal.h"
 
 
 using std::cout;
@@ -8,6 +9,7 @@ using std::endl;
 
 int main(int argc, char* argv[])
 {
+#if 0	// Serial terminal
 	SerialTerminal serial;
 
 	try
@@ -37,6 +39,16 @@ int main(int argc, char* argv[])
 	serial.SetPos(DISPLAY_WIDTH, DISPLAY_HEIGHT);
 	serial.Cursor(BLUE, false, true, true);
 	serial.Print("Hello", BLACK, CYAN);
-	
+#endif	// Serial terminal
+
+#if 1	// windows terminal
+	WindowsTerminal windows;
+
+	cout << "Hello" << endl;
+	windows.SetPos(5, 3);
+	cout << "Hello" << endl;
+
+#endif	// windows terminal
+
 	return 0;
 }

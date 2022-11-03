@@ -142,11 +142,13 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SerialTerminal.cpp" />
+    <ClCompile Include="WindowsTerminal.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
     <ClInclude Include="SerialTerminal.h" />
     <ClInclude Include="SerialTerminalConstants.h" />
+    <ClInclude Include="WindowsTerminal.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
