@@ -43,11 +43,12 @@ int main(int argc, char* argv[])
 
 #if 1	// windows terminal
 	WindowsTerminal windows;
-
-	cout << "Hello" << endl;
-	windows.SetPos(5, 3);
-	cout << "Hello" << endl;
-
+		
+	windows.SetPos(0, 0);
+	cout << "Hello";
+	windows.SetPos(DISPLAY_WIDTH, DISPLAY_HEIGHT);
+	cout << "H";
+	
 #endif	// windows terminal
 
 	return 0;
