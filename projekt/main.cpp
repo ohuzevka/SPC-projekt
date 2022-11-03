@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
 	game.serial.Print("Hello", BLACK, CYAN);
 #endif	// Serial terminal
 
-#ifdef WINDOWS_TERMINAL	// windows terminal	WindowsTerminal windows;
+#ifdef WINDOWS_TERMINAL	// windows terminal
 		
 	game.DrawBorder('#');
 	

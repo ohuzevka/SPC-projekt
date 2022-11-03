@@ -21,6 +21,14 @@ struct Pos	// Position on terminal
 	uint8_t Y;
 };
 
+struct BorderPos
+{
+	uint8_t leftPos;
+	uint8_t rightPos;
+	uint8_t topPos;
+	uint8_t bottomPos;
+};
+
 class Snake
 {
 	static const unsigned int maxLenght = 50;
@@ -40,7 +48,7 @@ class Game
 	unsigned int score;
 	unsigned int speed;
 	Snake snake;
-	Pos playingField = { 10, 10 };
+	BorderPos border = { 1, DISPLAY_WIDTH - 1, 1, DISPLAY_HEIGHT - 1 };
 
 public:
 	SerialTerminal serial;

@@ -7,38 +7,50 @@ using std::endl;
 void Game::DrawBorder(const char character)
 {
 #ifdef WINDOWS_TERMINAL
-	windows.SetPos(0, 0);
-	for (int x = 0; x < playingField.X + 2; x++)	// top
-		cout << character;
-	for (int y = 0; y < playingField.Y; y++)		// left
-		cout << "\n" << character;
-	for (int y = 0; y < playingField.Y; y++)		// right
+	if (border.leftPos >= border.rightPos || border.topPos >= border.bottomPos)
+		cout << "Invalid border dimensions" << endl;
+	else
 	{
-		windows.SetPos(playingField.X + 1, y + 1);
-		cout << character;
+		windows.SetPos(border.leftPos, border.topPos);
+		for (int i = 0; i < border.rightPos; i++)	// top
+			cout << character;
+		for (int i = border.topPos + 1; i < border.bottomPos; i++)		// left
+		{
+			windows.SetPos(border.leftPos, i);
+			cout << character;
+		}
+		for (int i = border.topPos + 1; i < border.bottomPos; i++)		// right
+		{
+			windows.SetPos(border.rightPos, i);
+			cout << character;
+		}
+		windows.SetPos(border.leftPos, border.bottomPos);
+		for (int i = 0; i < border.rightPos; i++)	// bottom
+			cout << character;
 	}
-	windows.SetPos(0, playingField.Y + 1);
-	for (int x = 0; x < playingField.X + 2; x++)	// bottom
-		cout << character;
 #endif // WINDOWS_TERMINAL
 
 #ifdef SERIAL_TERMINAL
-	serial.SetPos(0, 0);
-	for (int x = 0; x < playingField.X + 2; x++)	// top
-		serial.Print(character, BLACK, WHITE);		// !! starta funkce, potreba opravit
-	for (int y = 0; y < playingField.Y; y++)		// left
+	if (border.leftPos >= border.rightPos || border.topPos >= border.bottomPos)
+		serial.Print("Invalid border dimensions", BLACK, WHITE);
+	else
 	{
-		serial.Print('\n', BLACK, WHITE);
-		serial.Print(character, BLACK, WHITE);
+		serial.SetPos(border.leftPos, border.topPos);
+		for (int i = 0; i < border.rightPos; i++)	// top
+			serial.Print(character, BLACK, WHITE);
+		for (int i = border.topPos + 1; i < border.bottomPos; i++)		// left
+		{
+			serial.SetPos(border.leftPos, i);
+			serial.Print(character, BLACK, WHITE);
+		}
+		for (int i = border.topPos + 1; i < border.bottomPos; i++)		// right
+		{
+			serial.SetPos(border.rightPos, i);
+			serial.Print(character, BLACK, WHITE);
+		}
+		serial.SetPos(border.leftPos, border.bottomPos);
+		for (int i = 0; i < border.rightPos; i++)	// bottom
+			serial.Print(character, BLACK, WHITE);
 	}
-	for (int y = 0; y < playingField.Y; y++)		// right
-	{
-		serial.SetPos(playingField.X + 1, y + 1);
-		serial.Print(character, BLACK, WHITE);
-	}
-	serial.SetPos(0, playingField.Y + 1);
-	for (int x = 0; x < playingField.X + 2; x++)	// bottom
-		serial.Print(character, BLACK, WHITE);
-
 #endif // SERIAL_TERMINAL
 }
