@@ -5,7 +5,7 @@
 
 // select output terminal:
 #define WINDOWS_TERMINAL
-#define SERIAL_TERMINAL
+//#define SERIAL_TERMINAL
 
 enum Dir	// Direction of snake movement
 {
@@ -15,10 +15,10 @@ enum Dir	// Direction of snake movement
 	DOWN
 };
 
-struct Chain	// One chain of snake
+struct Pos	// Position on terminal
 {
-	uint8_t posX;
-	uint8_t posY;
+	uint8_t X;
+	uint8_t Y;
 };
 
 class Snake
@@ -26,7 +26,7 @@ class Snake
 	static const unsigned int maxLenght = 50;
 	uint8_t lenght;
 	Dir dir;
-	Chain chain[maxLenght];
+	Pos chain[maxLenght];
 
 public:
 	void Draw();
@@ -40,8 +40,11 @@ class Game
 	unsigned int score;
 	unsigned int speed;
 	Snake snake;
+	Pos playingField = { 10, 10 };
 
 public:
 	SerialTerminal serial;
 	WindowsTerminal windows;
+
+	void DrawBorder(const char character);
 };

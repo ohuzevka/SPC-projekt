@@ -41,10 +41,7 @@ int main(int argc, char* argv[])
 
 #ifdef WINDOWS_TERMINAL	// windows terminal	WindowsTerminal windows;
 		
-	game.windows.SetPos(0, 0);
-	cout << "Hello";
-	game.windows.SetPos(DISPLAY_WIDTH, DISPLAY_HEIGHT);
-	cout << "H";
+	game.DrawBorder('#');
 	
 #endif	// windows terminal
 
