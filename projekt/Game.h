@@ -9,6 +9,7 @@
 
 enum Dir	// Direction of snake movement
 {
+	STILL,
 	LEFT,
 	RIGHT,
 	UP,
@@ -35,8 +36,12 @@ class Snake
 	uint8_t lenght;
 	Dir dir;
 	Pos chain[maxLenght];
+	const char headChar = '@';
+	const char bodyChar = 'O';
 
 public:
+	void Spawn (uint8_t SpawnPosX = 0, uint8_t SpawnPosY = 0);
+	
 	void Draw();
 
 	void Move();
@@ -54,5 +59,7 @@ public:
 	SerialTerminal serial;
 	WindowsTerminal windows;
 
+	Game();
+	
 	void DrawBorder(const char character);
 };

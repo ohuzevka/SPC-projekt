@@ -4,6 +4,11 @@
 using std::cout;
 using std::endl;
 
+Game::Game()
+{
+
+}
+
 void Game::DrawBorder(const char character)
 {
 #ifdef WINDOWS_TERMINAL
@@ -54,3 +59,12 @@ void Game::DrawBorder(const char character)
 	}
 #endif // SERIAL_TERMINAL
 }
+
+void Snake::Spawn(uint8_t SpawnPosX, uint8_t SpawnPosY)
+{
+	lenght = 0;
+	dir = STILL;
+	chain[0].X = SpawnPosX;
+	chain[0].Y = SpawnPosY;
+}
+
