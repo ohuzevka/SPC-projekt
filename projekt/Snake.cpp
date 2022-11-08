@@ -2,7 +2,7 @@
 #include<cstdlib>
 #include "SerialTerminal.h"
 
-void Snake::init(SerialTerminal* serial)
+void Snake::init(SerialTerminal& serial)
 {
 	snake[0].iX = 40;
 	snake[0].iY = 20;
@@ -27,8 +27,8 @@ void Snake::init(SerialTerminal* serial)
 	XiX = ((uint8_t)rand() % 79);
 	YiY = ((uint8_t)rand() % 39);
 
-	serial->SetPos(XiX, YiY);
-	serial->Print('#', BLACK, RED);
+	serial.SetPos(XiX, YiY);
+	serial.Print('#', BLACK, RED);
 
 	type = 0;
 }
@@ -37,7 +37,7 @@ void Snake::addElement()
 {
 }
 
-void Snake::move(SerialTerminal* serial)
+void Snake::move(SerialTerminal& serial)
 {
 	uint8_t tempEnd = end;
 	if ((snake[0].iX == XiX) && (snake[0].iY == YiY))
@@ -53,8 +53,8 @@ void Snake::move(SerialTerminal* serial)
 		YiY = ((uint8_t)rand() % 39);
 		type = ((uint8_t)rand() % 3);
 
-		serial->SetPos(XiX, YiY);
-		serial->Print('#', BLACK, RED);
+		serial.SetPos(XiX, YiY);
+		serial.Print('#', BLACK, RED);
 	}
 
 
@@ -93,22 +93,22 @@ void Snake::move(SerialTerminal* serial)
 	}
 }
 
-void Snake::draw(SerialTerminal* serial)
+void Snake::draw(SerialTerminal& serial)
 {
 	for (size_t i = 0; i < end; ++i)
 	{
 		if (i == 0)
 		{
-			serial->SetPos(snake[i].iX, snake[i].iY);
-			serial->Print('*', BLACK, WHITE);
+			serial.SetPos(snake[i].iX, snake[i].iY);
+			serial.Print('*', BLACK, WHITE);
 			continue;
 		}
 		//serial->SetPos(snake[i].iX, snake[i].iY);
 		//serial->Print("*", BLACK, WHITE);
 	}
 
-	serial->SetPos(snake[end].iX, snake[end].iY);
-	serial->Print(' ', BLACK, WHITE);
+	serial.SetPos(snake[end].iX, snake[end].iY);
+	serial.Print(' ', BLACK, WHITE);
 
 }
 

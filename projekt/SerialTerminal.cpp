@@ -108,7 +108,7 @@ void SerialTerminal::Read(char val)
 	if (buf[0] != SUCCESS || buf[1] != val)
 		throw WRONG_COMMAND;
 
-	if (buf[0] != SUCCESS || buf[0] != CMD_ERROR)
+	if (buf[0] != SUCCESS && buf[0] != CMD_ERROR)
 		throw NO_RESPONSE;
 }
 
