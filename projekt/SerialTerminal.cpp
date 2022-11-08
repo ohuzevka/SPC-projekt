@@ -56,19 +56,49 @@ void SerialTerminal::CreateConnection(const char commPort[], DWORD baudRate, BYT
 		throw SET_COMM_TIMEOUTS_ERR;
 
 	cout << "Successfully connected to serial port on " << commPort << endl;
+
+	isConnected = true;
 }
 
-void SerialTerminal::Write(uint8_t val[])
+bool SerialTerminal::Write(uint8_t val[])
 {
 	DWORD numberOfBytesWritten;
 
 	if (!WriteFile(hComm, val, 4, &numberOfBytesWritten, NULL))
-		throw WRITE_ERR;
+	{
+		isConnected = false;
+		isAlive = false;
+
+		return false;
+	}
 
 	if (numberOfBytesWritten != 4)
-		throw WRITE_ERR;
+	{
+		isConnected = false;
+		isAlive = false;
 
-	Read(val[0]);
+		return false;
+	}
+
+	try
+	{
+		Read(val[0]);
+	}
+	catch (SerialTerminalErr err)
+	{
+		if (err == READ_ERR)
+		{
+			isConnected = false;
+			isAlive = false;
+		}
+
+		if (err == NO_RESPONSE)
+			isAlive = false;
+
+		return false;
+	}
+
+	return true;
 }
 
 void SerialTerminal::Write(uint8_t val[], DWORD number)
@@ -112,32 +142,32 @@ void SerialTerminal::Read(char val)
 		throw NO_RESPONSE;
 }
 
-void SerialTerminal::Clear()
+bool SerialTerminal::Clear()
 {
 	uint8_t buf[4] = { ERASE, EMPTY, EMPTY, CRC};
 
-	Write(buf);
+	return Write(buf);
 }
 
-void SerialTerminal::Clear(uint8_t colour)
+bool SerialTerminal::Clear(uint8_t colour)
 {
 	Print('A', colour, colour);
 	uint8_t buf[4] = { ERASE, EMPTY, EMPTY, CRC };
 
-	Write(buf);
+	return Write(buf);
 }
 
-void SerialTerminal::SetPos(uint8_t x, uint8_t y)
+bool SerialTerminal::SetPos(uint8_t x, uint8_t y)
 {
-	uint8_t buf[4] = { SET_POS, x, y, CRC };
-
-	Write(buf);
-
 	actX = x;
 	actY = y;
+
+	uint8_t buf[4] = { SET_POS, x, y, CRC };
+
+	return Write(buf);
 }
 
-void SerialTerminal::Cursor(uint8_t colour, bool mode, bool blink, bool visible)
+bool SerialTerminal::Cursor(uint8_t colour, bool mode, bool blink, bool visible)
 {
 	uint8_t tempColor = colour;
 	uint8_t tempR = colour & 0b001;
@@ -149,37 +179,31 @@ void SerialTerminal::Cursor(uint8_t colour, bool mode, bool blink, bool visible)
 
 	uint8_t buf[4] = { CURSOR, colour | mode << CURSOR_MODE | blink << CURSOR_BLINK | visible << CURSOR_SHOW, EMPTY, CRC };
 
-	Write(buf);
+	return Write(buf);
 }
 
-void SerialTerminal::Print(char character, uint8_t background, uint8_t text)
+bool SerialTerminal::Print(char character, uint8_t background, uint8_t text)
 {
-	uint8_t buf[4] = { WRITE_CHAR, character, background | text << TEXT_COLOR, CRC };
-
-	Write(buf);
-
 	++actX;
 	if (actX > DISPLAY_WIDTH)
 	{
 		actX = 0;
 		++actY;
 	}
+
+	uint8_t buf[4] = { WRITE_CHAR, character, background | text << TEXT_COLOR, CRC };
+
+	return Write(buf);
 }
 
-void SerialTerminal::Print(const char* str, uint8_t background, uint8_t text)
+bool SerialTerminal::Print(const char* str, uint8_t background, uint8_t text)
 {
 	for (int i = 0; i < strlen(str); i++)
 	{
 		uint8_t buf[4] = { WRITE_CHAR, str[i], background | text << TEXT_COLOR, CRC};
-		try 
-		{
-			Write(buf);
-		}
-		catch (SerialTerminalErr WRITE_ERR)
-		{
-			cout << "Unable to write string: " << str << endl;
-			return;
-		}
+		
+		if (!Write(buf))
+			return false;
 
 		if (str[i] == '\n')
 		{
@@ -195,13 +219,26 @@ void SerialTerminal::Print(const char* str, uint8_t background, uint8_t text)
 				++actY;
 			}
 		}
-
 	}
+}
+
+bool SerialTerminal::GetStatus()
+{
+	return (isAlive && isConnected);
 }
 
 void SerialTerminal::KeepAlive()
 {
-	uint8_t buf[4] = { NOP, EMPTY, EMPTY, CRC };
+	if (isConnected)
+	{
+		uint8_t buf[4] = { NOP, EMPTY, EMPTY, CRC };
 
-	Write(buf);
+		if (!Write(buf))
+		{
+			cout << "No response" << endl;
+		}
+	}
+	else
+		cout << "No response" << endl;
+
 }

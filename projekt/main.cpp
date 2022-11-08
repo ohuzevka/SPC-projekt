@@ -9,11 +9,11 @@
 using std::cout;
 using std::endl;
 
-bool stopRequest = false;
+//bool stopRequest = false;
 
 void callback1(Snake& aGame, SerialTerminal& aSerial)
 {
-	while (!stopRequest)
+	while (1)
 	{
 		aGame.draw(aSerial);
 		aGame.move(aSerial);
@@ -27,7 +27,7 @@ void callback2(Snake& aGame, SerialTerminal& aSerial)
 	HANDLE hIn = GetStdHandle(STD_INPUT_HANDLE);
 	INPUT_RECORD InRec;
 
-	while (!stopRequest)
+	while (1)
 	{
 		DWORD numberRec;
 		ReadConsoleInput(hIn, &InRec, 1, &numberRec);
@@ -65,49 +65,12 @@ void callback3(Snake& aGame, SerialTerminal& aSerial)
 {
 	size_t retriesCounter = 0;
 
-	while (!stopRequest)
+	while (1)
 	{
-		try
-		{
-			aSerial.KeepAlive();
-		}
-		catch (SerialTerminalErr err)
-		{
-			++retriesCounter;
-
-			switch (err)
-			{
-			case READ_ERR:
-				cout << "Serial port disconnected!" << endl;
-
-				stopRequest = true;
-
-				break;
-
-			case WRITE_ERR:
-				cout << "Serial port disconnected!" << endl;
-
-				stopRequest = true;
-
-				break;
-
-			case NO_RESPONSE:
-				cout << "No response from serial terminal!" << endl;
-
-				break;
-			}
-
-			std::this_thread::sleep_for(std::chrono::milliseconds(1500));
-		}
-		catch (...)
-		{
-			;
-		}
-
+		aSerial.KeepAlive();
+		
 		if (retriesCounter >= RETRIES)
 		{
-			stopRequest = true;
-
 			cout << "Connection timeout!" << endl;
 		}
 		else

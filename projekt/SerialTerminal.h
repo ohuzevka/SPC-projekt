@@ -27,13 +27,11 @@ class SerialTerminal
 
 	size_t actX, actY;
 
+	bool isConnected;
 
-public:
-	SerialTerminal();
+	bool isAlive;
 
-	void CreateConnection(const char aCommPort[], DWORD aBaudRate, BYTE aParity, BYTE aByteSize, BYTE aStopBits);
-
-	void Write(uint8_t val[]);
+	bool Write(uint8_t val[]);
 
 	void Write(uint8_t val[], DWORD number);
 
@@ -41,17 +39,24 @@ public:
 
 	void Read(char val);
 
-	void Clear();
+public:
+	SerialTerminal();
 
-	void Clear(uint8_t colour);
+	void CreateConnection(const char aCommPort[], DWORD aBaudRate, BYTE aParity, BYTE aByteSize, BYTE aStopBits);
 
-	void SetPos(uint8_t x, uint8_t y);
+	bool Clear();
 
-	void Cursor(uint8_t colour, bool mode, bool blink, bool visible);
+	bool Clear(uint8_t colour);
 
-	void Print(char character, uint8_t background, uint8_t text);
+	bool SetPos(uint8_t x, uint8_t y);
 
-	void Print(const char* str, uint8_t background, uint8_t text);
+	bool Cursor(uint8_t colour, bool mode, bool blink, bool visible);
+
+	bool Print(char character, uint8_t background, uint8_t text);
+
+	bool Print(const char* str, uint8_t background, uint8_t text);
+
+	bool GetStatus();
 
 	void KeepAlive();
 };
