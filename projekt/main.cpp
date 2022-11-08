@@ -15,9 +15,11 @@ void callback1(Snake& aSnake, SerialTerminal& aSerial)
 {
 	while (1)
 	{
-		aSnake.draw(aSerial);
-		aSnake.move(aSerial);
-
+		if (aSnake.apause == false)
+		{
+			aSnake.move();
+			aSnake.draw();
+		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
 }
@@ -80,13 +82,13 @@ void callback3(Snake& aSnake, SerialTerminal& aSerial)
 
 int main(int argc, char* argv[])
 {
-	Snake snake;
 	SerialTerminal serial;
+	Snake snake(&serial);
 
 	serial.CreateConnection("COM1", CBR_115200, NOPARITY, 8, ONESTOPBIT);
 
 	serial.Clear();
-	snake.init(serial);
+	snake.init();
 
 	std::thread thread1(callback1, std::ref(snake), std::ref(serial));
 	std::thread thread2(callback2, std::ref(snake), std::ref(serial));

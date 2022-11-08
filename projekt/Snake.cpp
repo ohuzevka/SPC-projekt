@@ -2,7 +2,12 @@
 #include<cstdlib>
 #include "SerialTerminal.h"
 
-void Snake::init(SerialTerminal& serial)
+Snake::Snake(SerialTerminal* aSerial)
+{
+	serial = aSerial;
+}
+
+void Snake::init()
 {
 	snake[0].iX = 40;
 	snake[0].iY = 20;
@@ -27,8 +32,8 @@ void Snake::init(SerialTerminal& serial)
 	XiX = ((uint8_t)rand() % DISPLAY_WIDTH);
 	YiY = ((uint8_t)rand() % DISPLAY_HEIGHT);
 
-	serial.SetPos(XiX, YiY);
-	serial.Print('#', BLACK, RED);
+	serial->SetPos(XiX, YiY);
+	serial->Print('#', BLACK, RED);
 
 	type = 0;
 }
@@ -37,7 +42,7 @@ void Snake::addElement()
 {
 }
 
-void Snake::move(SerialTerminal& serial)
+void Snake::move()
 {
 	uint8_t tempEnd = end;
 	if ((snake[0].iX == XiX) && (snake[0].iY == YiY))
@@ -49,12 +54,12 @@ void Snake::move(SerialTerminal& serial)
 
 		srand((unsigned)time(NULL));
 
-		XiX = ((uint8_t)rand() % 79);
-		YiY = ((uint8_t)rand() % 39);
+		XiX = ((uint8_t)rand() % DISPLAY_WIDTH);
+		YiY = ((uint8_t)rand() % DISPLAY_HEIGHT);
 		type = ((uint8_t)rand() % 3);
 
-		serial.SetPos(XiX, YiY);
-		serial.Print('#', BLACK, RED);
+		serial->SetPos(XiX, YiY);
+		serial->Print('#', BLACK, RED);
 	}
 
 
@@ -93,22 +98,22 @@ void Snake::move(SerialTerminal& serial)
 	}
 }
 
-void Snake::draw(SerialTerminal& serial)
+void Snake::draw()
 {
 	for (size_t i = 0; i < end; ++i)
 	{
 		if (i == 0)
 		{
-			serial.SetPos(snake[i].iX, snake[i].iY);
-			serial.Print('*', BLACK, WHITE);
+			serial->SetPos(snake[i].iX, snake[i].iY);
+			serial->Print('*', BLACK, WHITE);
 			continue;
 		}
 		//serial->SetPos(snake[i].iX, snake[i].iY);
 		//serial->Print("*", BLACK, WHITE);
 	}
 
-	serial.SetPos(snake[end].iX, snake[end].iY);
-	serial.Print(' ', BLACK, WHITE);
+	serial->SetPos(snake[end].iX, snake[end].iY);
+	serial->Print(' ', BLACK, WHITE);
 
 }
 
@@ -120,6 +125,7 @@ void Snake::changeDir(direction dir)
 void Snake::pause()
 {
 	apause = true;
+
 }
 
 void Snake::play()

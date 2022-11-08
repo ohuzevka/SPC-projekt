@@ -21,18 +21,19 @@ struct element
 
 class Snake
 {
-	bool apause;
+	SerialTerminal* serial = nullptr;
 	element snake[20];
-
 	uint8_t type;
 	uint8_t XiX;
 	uint8_t YiY;
 public:
+	bool apause;
 	uint8_t end = 0;
-	void init(SerialTerminal& serial);
+	Snake(SerialTerminal* aSerial);
+	void init();
 	void addElement();
-	void move(SerialTerminal& serial);
-	void draw(SerialTerminal& serial);
+	void move();
+	void draw();
 
 	void changeDir(direction dir);
 	void pause();
