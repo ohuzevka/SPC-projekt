@@ -24,8 +24,8 @@ void Snake::init(SerialTerminal& serial)
 
 	srand((unsigned)time(NULL));
 
-	XiX = ((uint8_t)rand() % 79);
-	YiY = ((uint8_t)rand() % 39);
+	XiX = ((uint8_t)rand() % DISPLAY_WIDTH);
+	YiY = ((uint8_t)rand() % DISPLAY_HEIGHT);
 
 	serial.SetPos(XiX, YiY);
 	serial.Print('#', BLACK, RED);

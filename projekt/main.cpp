@@ -11,18 +11,18 @@ using std::endl;
 
 //bool stopRequest = false;
 
-void callback1(Snake& aGame, SerialTerminal& aSerial)
+void callback1(Snake& aSnake, SerialTerminal& aSerial)
 {
 	while (1)
 	{
-		aGame.draw(aSerial);
-		aGame.move(aSerial);
+		aSnake.draw(aSerial);
+		aSnake.move(aSerial);
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
 }
 
-void callback2(Snake& aGame, SerialTerminal& aSerial)
+void callback2(Snake& aSnake, SerialTerminal& aSerial)
 {
 	HANDLE hIn = GetStdHandle(STD_INPUT_HANDLE);
 	INPUT_RECORD InRec;
@@ -37,22 +37,22 @@ void callback2(Snake& aGame, SerialTerminal& aSerial)
 			switch (InRec.Event.KeyEvent.uChar.AsciiChar)
 			{
 			case 'w':
-				aGame.changeDir(UPWARDS);
+				aSnake.changeDir(UPWARDS);
 				break;
 			case 's':
-				aGame.changeDir(DOWNWARDS);
+				aSnake.changeDir(DOWNWARDS);
 				break;
 			case 'a':
-				aGame.changeDir(LEFTWARDS);
+				aSnake.changeDir(LEFTWARDS);
 				break;
 			case 'd':
-				aGame.changeDir(RIGHTWARDS);
+				aSnake.changeDir(RIGHTWARDS);
 				break;
 			case 'p':
-				aGame.pause();
+				aSnake.pause();
 				break;
 			case 'l':
-				aGame.play();
+				aSnake.play();
 				break;
 			}
 
@@ -61,7 +61,7 @@ void callback2(Snake& aGame, SerialTerminal& aSerial)
 	}
 }
 
-void callback3(Snake& aGame, SerialTerminal& aSerial)
+void callback3(Snake& aSnake, SerialTerminal& aSerial)
 {
 	size_t retriesCounter = 0;
 
@@ -80,17 +80,17 @@ void callback3(Snake& aGame, SerialTerminal& aSerial)
 
 int main(int argc, char* argv[])
 {
-	Snake game;
+	Snake snake;
 	SerialTerminal serial;
 
-	serial.CreateConnection("COM9", CBR_115200, NOPARITY, 8, ONESTOPBIT);
+	serial.CreateConnection("COM1", CBR_115200, NOPARITY, 8, ONESTOPBIT);
 
 	serial.Clear();
-	game.init(serial);
+	snake.init(serial);
 
-	std::thread thread1(callback1, std::ref(game), std::ref(serial));
-	std::thread thread2(callback2, std::ref(game), std::ref(serial));
-	std::thread thread3(callback3, std::ref(game), std::ref(serial));
+	std::thread thread1(callback1, std::ref(snake), std::ref(serial));
+	std::thread thread2(callback2, std::ref(snake), std::ref(serial));
+	std::thread thread3(callback3, std::ref(snake), std::ref(serial));
 
 	thread1.join();
 	thread2.join();
