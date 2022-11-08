@@ -1,5 +1,7 @@
 #pragma once
 
+#define RETRIES 5
+
 #define DISPLAY_WIDTH 79
 #define DISPLAY_HEIGHT 39
 
@@ -24,6 +26,7 @@
 #define TEXT_BLINK 7
 
 #define SUCCESS 'A'
+#define CMD_ERROR 'N'
 
 #define BLACK 0b000
 #define WHITE 0b111
