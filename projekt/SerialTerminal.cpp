@@ -89,7 +89,7 @@ void SerialTerminal::Read(uint8_t* val)
 	if(!ReadFile(hComm, val, 1, &numberOfBytesReaded, NULL))
 		throw READ_ERR;
 
-	if (numberOfBytesReaded != 1);
+	if (numberOfBytesReaded != 1)
 		throw READ_ERR;
 }
 
@@ -106,7 +106,10 @@ void SerialTerminal::Read(char val)
 		throw READ_ERR;
 
 	if (buf[0] != SUCCESS || buf[1] != val)
-		throw READ_ERR;
+		throw WRONG_COMMAND;
+
+	if (buf[0] != SUCCESS || buf[0] != CMD_ERROR)
+		throw NO_RESPONSE;
 }
 
 void SerialTerminal::Clear()
@@ -194,4 +197,11 @@ void SerialTerminal::Print(const char* str, uint8_t background, uint8_t text)
 		}
 
 	}
+}
+
+void SerialTerminal::KeepAlive()
+{
+	uint8_t buf[4] = { NOP, EMPTY, EMPTY, CRC };
+
+	Write(buf);
 }

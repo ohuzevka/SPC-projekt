@@ -10,7 +10,9 @@ enum SerialTerminalErr
 	SET_COMM_STATE_ERR,
 	SET_COMM_TIMEOUTS_ERR,
 	WRITE_ERR,
-	READ_ERR
+	READ_ERR,
+	WRONG_COMMAND,
+	NO_RESPONSE
 };
 
 class SerialTerminal
@@ -25,10 +27,11 @@ class SerialTerminal
 
 	size_t actX, actY;
 
+
 public:
 	SerialTerminal();
 
-	void CreateConnection(const char commPort[], DWORD baudRate, BYTE parity, BYTE byteSize, BYTE stopBits);
+	void CreateConnection(const char aCommPort[], DWORD aBaudRate, BYTE aParity, BYTE aByteSize, BYTE aStopBits);
 
 	void Write(uint8_t val[]);
 
@@ -49,5 +52,7 @@ public:
 	void Print(char character, uint8_t background, uint8_t text);
 
 	void Print(const char* str, uint8_t background, uint8_t text);
+
+	void KeepAlive();
 };
 

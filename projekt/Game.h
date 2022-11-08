@@ -3,6 +3,7 @@
 #include "SerialTerminal.h"
 #include "WindowsTerminal.h"
 
+
 // select output terminal:
 #define WINDOWS_TERMINAL
 //#define SERIAL_TERMINAL
@@ -49,6 +50,8 @@ class Game
 	unsigned int speed;
 	Snake snake;
 	BorderPos border = { 1, DISPLAY_WIDTH - 1, 1, DISPLAY_HEIGHT - 1 };
+
+
 
 public:
 	SerialTerminal serial;
