@@ -5,6 +5,7 @@
 Snake::Snake(SerialTerminal* aSerial)
 {
 	serial = aSerial;
+	apause = true;
 }
 
 void Snake::init()

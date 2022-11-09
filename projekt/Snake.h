@@ -22,12 +22,12 @@ struct element
 class Snake
 {
 	SerialTerminal* serial = nullptr;
+	bool apause;
 	element snake[20];
 	uint8_t type;
 	uint8_t XiX;
 	uint8_t YiY;
 public:
-	bool apause;
 	uint8_t end = 0;
 	Snake(SerialTerminal* aSerial);
 	void init();

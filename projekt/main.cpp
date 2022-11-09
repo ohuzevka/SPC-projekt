@@ -15,7 +15,7 @@ void callback1(Snake& aSnake, SerialTerminal& aSerial)
 {
 	while (1)
 	{
-		if (aSnake.apause == false)
+		if (aSnake.state() == false)
 		{
 			aSnake.move();
 			aSnake.draw();
@@ -89,6 +89,7 @@ int main(int argc, char* argv[])
 
 	serial.Clear();
 	snake.init();
+	snake.draw();
 
 	std::thread thread1(callback1, std::ref(snake), std::ref(serial));
 	std::thread thread2(callback2, std::ref(snake), std::ref(serial));
