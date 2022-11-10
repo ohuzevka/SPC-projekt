@@ -24,6 +24,8 @@ class Snake
 	SerialTerminal* serial = nullptr;
 	bool apause;
 	element snake[20];
+	const char headChar = '@';
+	const char bodyChar = 'O';
 	uint8_t type;
 	uint8_t XiX;
 	uint8_t YiY;
@@ -34,6 +36,7 @@ public:
 	void addElement();
 	void move();
 	void draw();
+	void redraw();
 
 	void changeDir(direction dir);
 	void pause();

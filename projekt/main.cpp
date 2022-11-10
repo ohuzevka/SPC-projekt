@@ -18,7 +18,7 @@ void callback1(Snake& aSnake, SerialTerminal& aSerial)
 		if (aSnake.state() == false)
 		{
 			aSnake.move();
-			aSnake.draw();
+			aSnake.redraw();
 		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
@@ -85,7 +85,7 @@ int main(int argc, char* argv[])
 	SerialTerminal serial;
 	Snake snake(&serial);
 
-	serial.CreateConnection("COM1", CBR_115200, NOPARITY, 8, ONESTOPBIT);
+	serial.CreateConnection("COM2", CBR_115200, NOPARITY, 8, ONESTOPBIT);
 
 	serial.Clear();
 	snake.init();
