@@ -3,42 +3,55 @@
 #include <iostream>
 #include "SerialTerminal.h"
 
-enum direction
+enum Direction	// Direction of snake movement
 {
-	UPWARDS,
-	DOWNWARDS,
-	LEFTWARDS,
-	RIGHTWARDS
+	STILL,
+	LEFT,
+	RIGHT,
+	UP,
+	DOWN
 };
 
-struct element
+struct Position	// Position on terminal
 {
 	uint8_t iX;
 	uint8_t iY;
+};
 
-	direction dir;
+struct BorderPos
+{
+	uint8_t leftPos;
+	uint8_t rightPos;
+	uint8_t topPos;
+	uint8_t bottomPos;
 };
 
 class Snake
 {
 	SerialTerminal* serial = nullptr;
 	bool apause;
-	element snake[20];
+	Position snakeElement[50];
+	Direction direction;
 	const char headChar = '@';
 	const char bodyChar = 'O';
+	unsigned int score;
+	unsigned int speed;
+	BorderPos border = { 1, DISPLAY_WIDTH - 1, 1, DISPLAY_HEIGHT - 1 };
+	Position food;
 	uint8_t type;
-	uint8_t XiX;
-	uint8_t YiY;
+	uint8_t lenght;
 public:
-	uint8_t end = 0;
+		
 	Snake(SerialTerminal* aSerial);
 	void init();
+	void spawn(uint8_t SpawnPosX = 0, uint8_t SpawnPosY = 0);
+	void generateFood();
 	void addElement();
 	void move();
 	void draw();
 	void redraw();
-
-	void changeDir(direction dir);
+	void drawBorder(const char character);
+	void changeDir(Direction dir);
 	void pause();
 	void play();
 	bool state();

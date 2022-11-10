@@ -39,16 +39,16 @@ void callback2(Snake& aSnake, SerialTerminal& aSerial)
 			switch (InRec.Event.KeyEvent.uChar.AsciiChar)
 			{
 			case 'w':
-				aSnake.changeDir(UPWARDS);
+				aSnake.changeDir(UP);
 				break;
 			case 's':
-				aSnake.changeDir(DOWNWARDS);
+				aSnake.changeDir(DOWN);
 				break;
 			case 'a':
-				aSnake.changeDir(LEFTWARDS);
+				aSnake.changeDir(LEFT);
 				break;
 			case 'd':
-				aSnake.changeDir(RIGHTWARDS);
+				aSnake.changeDir(RIGHT);
 				break;
 			case 'p':
 				aSnake.pause();
@@ -84,6 +84,7 @@ int main(int argc, char* argv[])
 {
 	SerialTerminal serial;
 	Snake snake(&serial);
+
 
 	serial.CreateConnection("COM2", CBR_115200, NOPARITY, 8, ONESTOPBIT);
 

@@ -1,21 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include "SerialTerminal.h"
-#include "WindowsTerminal.h"
 
-
-// select output terminal:
-#define WINDOWS_TERMINAL
-//#define SERIAL_TERMINAL
-
-enum Dir	// Direction of snake movement
-{
-	STILL,
-	LEFT,
-	RIGHT,
-	UP,
-	DOWN
-};
 
 struct Pos	// Position on terminal
 {
@@ -31,38 +17,16 @@ struct BorderPos
 	uint8_t bottomPos;
 };
 
-class Snake
-{
-	static const unsigned int maxLenght = 50;
-	uint8_t lenght;
-	Dir dir;
-	Pos chain[maxLenght];
-	const char headChar = '@';
-	const char bodyChar = 'O';
-
-public:
-	void Spawn (uint8_t SpawnPosX = 0, uint8_t SpawnPosY = 0);
-	
-	void Draw();
-
-	void Move();
-};
 
 class Game
 {
-	bool running;
+	SerialTerminal* serial = nullptr;
+	bool paused;
 	unsigned int score;
 	unsigned int speed;
-	Snake snake;
 	BorderPos border = { 1, DISPLAY_WIDTH - 1, 1, DISPLAY_HEIGHT - 1 };
 
-
-
-public:
-	SerialTerminal serial;
-	WindowsTerminal windows;
-
-	Game();
-	
+public:	
+	Game(SerialTerminal* aSerial);
 	void DrawBorder(const char character);
 };

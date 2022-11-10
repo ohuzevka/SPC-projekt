@@ -10,31 +10,21 @@ Snake::Snake(SerialTerminal* aSerial)
 
 void Snake::init()
 {
-	snake[0].iX = 40;
-	snake[0].iY = 20;
-	snake[0].dir = DOWNWARDS;
+	snakeElement[0].iX = 40;
+	snakeElement[0].iY = 20;
 
-	snake[1].iX = 40;
-	snake[1].iY = 19;
-	snake[1].dir = DOWNWARDS;
+	snakeElement[1].iX = 40;
+	snakeElement[1].iY = 19;
 
-	snake[2].iX = 40;
-	snake[2].iY = 18;
-	snake[2].dir = DOWNWARDS;
+	snakeElement[2].iX = 40;
+	snakeElement[2].iY = 18;
 
-	snake[3].iX = 40;
-	snake[3].iY = 17;
-	snake[3].dir = DOWNWARDS;
+	snakeElement[3].iX = 40;
+	snakeElement[3].iY = 17;
 
-	end = 3;
+	lenght = 3;
 
-	srand((unsigned)time(NULL));
-
-	XiX = ((uint8_t)rand() % DISPLAY_WIDTH);
-	YiY = ((uint8_t)rand() % DISPLAY_HEIGHT);
-
-	serial->SetPos(XiX, YiY);
-	serial->Print('#', BLACK, RED);
+	generateFood();
 
 	type = 0;
 }
@@ -45,72 +35,52 @@ void Snake::addElement()
 
 void Snake::move()
 {
-	uint8_t tempEnd = end;
-	if ((snake[0].iX == XiX) && (snake[0].iY == YiY))
+	if ((snakeElement[0].iX == food.iX) && (snakeElement[0].iY == food.iY))
 	{
-		++end;
-		snake[end].iX = snake[end - 1].iX;
-		snake[end].iY = snake[end - 1].iY;
-		snake[end].dir = snake[end - 1].dir;
+		++lenght;
+		snakeElement[lenght].iX = snakeElement[lenght - 1].iX;
+		snakeElement[lenght].iY = snakeElement[lenght - 1].iY;
 
-		srand((unsigned)time(NULL));
-
-		XiX = ((uint8_t)rand() % DISPLAY_WIDTH);
-		YiY = ((uint8_t)rand() % DISPLAY_HEIGHT);
-		type = ((uint8_t)rand() % 3);
-
-		serial->SetPos(XiX, YiY);
-		serial->Print('#', BLACK, RED);
+		generateFood();
 	}
 
-
-	for (int8_t i = tempEnd; i >= 0; --i)
+	// Shift elements
+	for (int8_t i = lenght + 1; i > 0; --i)
 	{
-		switch (snake[i].dir)
-		{
-			case DOWNWARDS:
-				++snake[i].iY;
-
-				if (snake[0].iY > 38)
-					snake[0].dir = LEFTWARDS;
-				break;
-			case UPWARDS:
-				--snake[i].iY;
-
-				if (snake[0].iY < 1)
-					snake[0].dir = RIGHTWARDS;
-				break;
-			case LEFTWARDS:
-				--snake[i].iX;
-
-				if (snake[0].iX < 1)
-					snake[0].dir = UPWARDS;
-				break;
-			case RIGHTWARDS:
-				++snake[i].iX;
-
-				if (snake[0].iX > 78)
-					snake[0].dir = DOWNWARDS;
-				break;
-
-		}
-		if(i > 0)
-			snake[i].dir = snake[i - 1].dir;
+		snakeElement[i] = snakeElement[i - 1];
 	}
+	
+	// New head position
+	switch (direction)
+	{
+	case DOWN:
+		++snakeElement[0].iY;
+		break;
+	case UP:
+		--snakeElement[0].iY;
+		break;
+	case LEFT:
+		--snakeElement[0].iX;
+		break;
+	case RIGHT:
+		++snakeElement[0].iX;
+		break;
+	}
+
 }
 
 void Snake::draw()
 {
-	for (size_t i = 0; i < end; ++i)
+	for (uint8_t i = 0; i < lenght; ++i)
 	{
 		if (i == 0)
 		{	// Draw head of snake
-			serial->SetPos(snake[i].iX, snake[i].iY);
+			serial->SetPos(snakeElement[i].iX, snakeElement[i].iY);
 			serial->Print(headChar, BLACK, WHITE);
 		}
 		else
 		{	// Draw body of snake
-			serial->SetPos(snake[i].iX, snake[i].iY);
+			serial->SetPos(snakeElement[i].iX, snakeElement[i].iY);
 			serial->Print(bodyChar, BLACK, WHITE);
 		}
 	}
@@ -119,24 +89,60 @@ void Snake::draw()
 void Snake::redraw()
 {
 	// Draw new head of snake
-	serial->SetPos(snake[0].iX, snake[0].iY);
+	serial->SetPos(snakeElement[0].iX, snakeElement[0].iY);
 	serial->Print(headChar, BLACK, WHITE);
 
 	// Make the old head a body
-	if (end > 1)
+	if (lenght > 1)
 	{
-		serial->SetPos(snake[1].iX, snake[1].iY);
+		serial->SetPos(snakeElement[1].iX, snakeElement[1].iY);
 		serial->Print(bodyChar, BLACK, WHITE);
 	}
 
 	// Erase the last node of snake
-	serial->SetPos(snake[end].iX, snake[end].iY);
+	serial->SetPos(snakeElement[lenght].iX, snakeElement[lenght].iY);
 	serial->Print(' ', BLACK, WHITE);
 }
 
-void Snake::changeDir(direction dir)
+void Snake::generateFood()
 {
-	snake[0].dir = dir;
+	srand((unsigned)time(NULL));
+
+	food.iX = ((uint8_t)rand() % DISPLAY_WIDTH);
+	food.iY = ((uint8_t)rand() % DISPLAY_HEIGHT);
+
+	serial->SetPos(food.iX, food.iY);
+	serial->Print('#', BLACK, RED);
+}
+
+void Snake::drawBorder(const char character)
+{
+	if (border.leftPos >= border.rightPos || border.topPos >= border.bottomPos)
+		serial->Print("Invalid border dimensions", BLACK, WHITE);
+	else
+	{
+		serial->SetPos(border.leftPos, border.topPos);
+		for (int i = 0; i < border.rightPos; i++)	// top
+			serial->Print(character, BLACK, WHITE);
+		for (int i = border.topPos + 1; i < border.bottomPos; i++)		// left
+		{
+			serial->SetPos(border.leftPos, i);
+			serial->Print(character, BLACK, WHITE);
+		}
+		for (int i = border.topPos + 1; i < border.bottomPos; i++)		// right
+		{
+			serial->SetPos(border.rightPos, i);
+			serial->Print(character, BLACK, WHITE);
+		}
+		serial->SetPos(border.leftPos, border.bottomPos);
+		for (int i = 0; i < border.rightPos; i++)	// bottom
+			serial->Print(character, BLACK, WHITE);
+	}
+}
+
+void Snake::changeDir(Direction dir)
+{
+	direction = dir;
 }
 
 void Snake::pause()

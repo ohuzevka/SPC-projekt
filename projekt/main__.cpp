@@ -6,7 +6,6 @@ using std::endl;
 
 int main__(int argc, char* argv[])
 {
-	Game game;
 
 	// Select output terminal in Game.h
 #ifdef SERIAL_TERMINAL	// Serial terminal
