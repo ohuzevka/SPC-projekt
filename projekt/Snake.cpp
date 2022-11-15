@@ -7,6 +7,11 @@ Snake::Snake(SerialTerminal* aSerial)
 	serial = aSerial;
 	apause = true;
 	direction = DOWN;
+
+	border.topPos = 3;
+	border.bottomPos = DISPLAY_HEIGHT;
+	border.leftPos = 0;
+	border.rightPos = DISPLAY_WIDTH;
 }
 
 void Snake::init()
@@ -41,8 +46,7 @@ void Snake::move()
 		snakeElement[0].iY == border.bottomPos || snakeElement[0].iY == border.topPos)
 	{
 		pause();
-		serial->Clear();
-		serial->SetPos(0, 0);
+		serial->SetPos(35, 1);
 		serial->Print("Game Over", RED, BLACK);
 
 		return;
@@ -54,8 +58,7 @@ void Snake::move()
 		if (snakeElement[0].iX == snakeElement[i].iX && snakeElement[0].iY == snakeElement[i].iY)
 		{
 			pause();
-			serial->Clear();
-			serial->SetPos(0, 0);
+			serial->SetPos(35, 1);
 			serial->Print("Game Over", RED, BLACK);
 
 			return;
@@ -136,8 +139,8 @@ void Snake::generateFood()
 {
 	srand((unsigned)time(NULL));
 
-	food.iX = ((uint8_t)rand() % DISPLAY_WIDTH);
-	food.iY = ((uint8_t)rand() % DISPLAY_HEIGHT);
+	food.iX = border.leftPos + 1 + ((uint8_t)rand() % (border.rightPos - border.leftPos - 2));
+	food.iY = border.topPos + 1 + ((uint8_t)rand() % (border.bottomPos - border.topPos - 2));
 
 	serial->SetPos(food.iX, food.iY);
 	serial->Print('#', BLACK, RED);
