@@ -12,6 +12,13 @@ enum Direction	// Direction of snake movement
 	DOWN
 };
 
+enum Status
+{
+	PAUSED,
+	RUNNING,
+	GAME_OVER
+};
+
 struct Position	// Position on terminal
 {
 	uint8_t iX;
@@ -29,7 +36,6 @@ struct BorderPos
 class Snake
 {
 	SerialTerminal* serial = nullptr;
-	bool apause;
 	Position snakeElement[50];
 	Direction direction;
 	const char headChar = '@';
@@ -40,6 +46,7 @@ class Snake
 	Position food;
 	uint8_t type;
 	uint8_t lenght;
+	Status state;
 public:
 		
 	Snake(SerialTerminal* aSerial);
@@ -52,8 +59,9 @@ public:
 	void redraw();
 	void drawBorder(const char character);
 	void changeDir(Direction dir);
+	Status status();
 	void pause();
 	void play();
-	bool state();
+	void gameOver();
 };
 

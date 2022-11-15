@@ -5,7 +5,7 @@
 Snake::Snake(SerialTerminal* aSerial)
 {
 	serial = aSerial;
-	apause = true;
+	state = PAUSED;
 	direction = DOWN;
 
 	border.topPos = 3;
@@ -30,9 +30,11 @@ void Snake::init()
 
 	lenght = 3;
 
-	generateFood();
+	serial->Clear(BLACK);
+	drawBorder('#');
+	draw();
 
-	type = 0;
+	generateFood();
 }
 
 void Snake::addElement()
@@ -45,10 +47,7 @@ void Snake::move()
 	if (snakeElement[0].iX == border.leftPos || snakeElement[0].iX == border.rightPos ||
 		snakeElement[0].iY == border.bottomPos || snakeElement[0].iY == border.topPos)
 	{
-		pause();
-		serial->SetPos(35, 1);
-		serial->Print("Game Over", RED, BLACK);
-
+		gameOver();
 		return;
 	}
 
@@ -57,10 +56,7 @@ void Snake::move()
 	{
 		if (snakeElement[0].iX == snakeElement[i].iX && snakeElement[0].iY == snakeElement[i].iY)
 		{
-			pause();
-			serial->SetPos(35, 1);
-			serial->Print("Game Over", RED, BLACK);
-
+			gameOver();
 			return;
 		}
 	}
@@ -137,11 +133,21 @@ void Snake::redraw()
 
 void Snake::generateFood()
 {
-	srand((unsigned)time(NULL));
+	bool flag = true;
+	while (flag == true)
+	{
+		srand((unsigned)time(NULL));
 
-	food.iX = border.leftPos + 1 + ((uint8_t)rand() % (border.rightPos - border.leftPos - 2));
-	food.iY = border.topPos + 1 + ((uint8_t)rand() % (border.bottomPos - border.topPos - 2));
+		food.iX = border.leftPos + 1 + ((uint8_t)rand() % (border.rightPos - border.leftPos - 2));
+		food.iY = border.topPos + 1 + ((uint8_t)rand() % (border.bottomPos - border.topPos - 2));
 
+		flag = false;
+		for (uint8_t i = 1; i < lenght; i++)
+		{
+			if (food.iX == snakeElement[i].iX && food.iY == snakeElement[i].iY)
+				flag = true;
+		}
+	}
 	serial->SetPos(food.iX, food.iY);
 	serial->Print('#', BLACK, RED);
 }
@@ -181,16 +187,23 @@ void Snake::changeDir(Direction dir)
 
 void Snake::pause()
 {
-	apause = true;
-
+	state = PAUSED;
 }
 
 void Snake::play()
 {
-	apause = false;
+	state = RUNNING;
 }
 
-bool Snake::state()
+Status Snake::status()
 {
-	return apause;
+	return state;
+}
+
+void Snake::gameOver()
+{
+	pause();
+	serial->SetPos(35, 1);
+	serial->Print("Game Over", RED, BLACK);
+
 }
