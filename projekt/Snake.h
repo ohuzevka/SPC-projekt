@@ -36,7 +36,7 @@ class Snake
 	const char bodyChar = 'O';
 	unsigned int score;
 	unsigned int speed;
-	BorderPos border = { 1, DISPLAY_WIDTH - 1, 1, DISPLAY_HEIGHT - 1 };
+	BorderPos border = { 0, DISPLAY_WIDTH, 0, DISPLAY_HEIGHT };
 	Position food;
 	uint8_t type;
 	uint8_t lenght;

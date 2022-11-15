@@ -6,6 +6,7 @@ Snake::Snake(SerialTerminal* aSerial)
 {
 	serial = aSerial;
 	apause = true;
+	direction = DOWN;
 }
 
 void Snake::init()
@@ -35,6 +36,32 @@ void Snake::addElement()
 
 void Snake::move()
 {
+	// Test if it crashed to border
+	if (snakeElement[0].iX == border.leftPos || snakeElement[0].iX == border.rightPos ||
+		snakeElement[0].iY == border.bottomPos || snakeElement[0].iY == border.topPos)
+	{
+		pause();
+		serial->Clear();
+		serial->SetPos(0, 0);
+		serial->Print("Game Over", RED, BLACK);
+
+		return;
+	}
+
+	// Test if snake crashed into itself
+	for (uint8_t i = 1; i < lenght; i++)
+	{
+		if (snakeElement[0].iX == snakeElement[i].iX && snakeElement[0].iY == snakeElement[i].iY)
+		{
+			pause();
+			serial->Clear();
+			serial->SetPos(0, 0);
+			serial->Print("Game Over", RED, BLACK);
+
+			return;
+		}
+	}
+
 	if ((snakeElement[0].iX == food.iX) && (snakeElement[0].iY == food.iY))
 	{
 		++lenght;
@@ -67,6 +94,7 @@ void Snake::move()
 		break;
 	}
 
+	redraw();
 }
 
 void Snake::draw()
@@ -142,6 +170,9 @@ void Snake::drawBorder(const char character)
 
 void Snake::changeDir(Direction dir)
 {
+	if ((dir == LEFT && direction == RIGHT) || (dir == RIGHT && direction == LEFT) ||
+		(dir == UP && direction == DOWN) || (dir == DOWN && direction == UP))
+		return;
 	direction = dir;
 }
 
