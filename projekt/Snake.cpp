@@ -150,7 +150,7 @@ void Snake::drawBorder(const char character)
 	else
 	{
 		serial->SetPos(border.leftPos, border.topPos);
-		for (int i = 0; i < border.rightPos; i++)	// top
+		for (int i = 0; i <= border.rightPos; i++)	// top
 			serial->Print(character, BLACK, WHITE);
 		for (int i = border.topPos + 1; i < border.bottomPos; i++)		// left
 		{
@@ -163,7 +163,7 @@ void Snake::drawBorder(const char character)
 			serial->Print(character, BLACK, WHITE);
 		}
 		serial->SetPos(border.leftPos, border.bottomPos);
-		for (int i = 0; i < border.rightPos; i++)	// bottom
+		for (int i = 0; i <= border.rightPos; i++)	// bottom
 			serial->Print(character, BLACK, WHITE);
 	}
 }
