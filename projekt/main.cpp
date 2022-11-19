@@ -16,7 +16,16 @@ void callback1(Snake& aSnake, SerialTerminal& aSerial)
 	while (1)
 	{
 		if (aSnake.speedChangedFlag == true)
+		{
 			aSnake.printSpeed();
+			aSnake.speedChangedFlag = false;
+		}
+
+		if (aSnake.stateChangedFlag == true)
+		{
+			aSnake.printStatus();
+			aSnake.stateChangedFlag = false;
+		}
 
 		if (aSnake.status() == RUNNING)
 		{
@@ -42,19 +51,23 @@ void callback2(Snake& aSnake, SerialTerminal& aSerial)
 			{
 			case 'w':
 				aSnake.changeDir(UP);
-				aSnake.play();
+				if(aSnake.status() == PAUSED)
+					aSnake.play();
 				break;
 			case 's':
 				aSnake.changeDir(DOWN);
-				aSnake.play();
+				if (aSnake.status() == PAUSED)
+					aSnake.play();
 				break;
 			case 'a':
 				aSnake.changeDir(LEFT);
-				aSnake.play();
+				if (aSnake.status() == PAUSED)
+					aSnake.play();
 				break;
 			case 'd':
 				aSnake.changeDir(RIGHT);
-				aSnake.play();
+				if (aSnake.status() == PAUSED)
+					aSnake.play();
 				break;
 			case ' ':
 				if (aSnake.status() == RUNNING)

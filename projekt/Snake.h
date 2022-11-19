@@ -47,8 +47,10 @@ class Snake
 	uint8_t type;
 	uint8_t lenght;
 	Status state;
-public:
-		
+public:	
+	bool speedChangedFlag;
+	bool stateChangedFlag;
+
 	Snake(SerialTerminal* aSerial);
 	void init();
 	void spawn(uint8_t SpawnPosX = 0, uint8_t SpawnPosY = 0);
@@ -67,6 +69,7 @@ public:
 	void decreaseSpeed();
 	uint8_t getSpeed();
 	void printSpeed();
-	bool speedChangedFlag;
+	void printLenght();
+	void printStatus();
 };
 

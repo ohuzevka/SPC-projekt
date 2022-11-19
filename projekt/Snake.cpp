@@ -19,6 +19,8 @@ Snake::Snake(SerialTerminal* aSerial)
 
 void Snake::init()
 {
+	state = PAUSED;
+
 	snakeElement[0].iX = 40;
 	snakeElement[0].iY = 20;
 
@@ -30,19 +32,14 @@ void Snake::init()
 
 	serial->Clear(BLACK);
 
-	serial->SetPos(1, 1); serial->Print("Move:  W,S,A,D", BLACK, WHITE);
-	serial->SetPos(1, 2); serial->Print("Pause: SPACE", BLACK, WHITE);
-	serial->SetPos(1, 3); serial->Print("Speed: +,-", BLACK, WHITE);
+	serial->SetPos(1, 1); serial->Print("Pause: SPACE", BLACK, WHITE);
+	serial->SetPos(1, 2); serial->Print("Speed: +,-", BLACK, WHITE);
+	serial->SetPos(1, 3); serial->Print("Move:  W,S,A,D", BLACK, WHITE);
 
-
-	char lenghtString[3];
-	char speedString[3];
-	sprintf_s(lenghtString, 3, "%2d", lenght);
-	sprintf_s(speedString, 3, "%2d", speed);
-
-	serial->SetPos(68, 1); serial->Print("Lenght: ", BLACK, WHITE); serial->Print(lenghtString, BLACK, WHITE);
-	serial->SetPos(68, 2); serial->Print("Speed:  ", BLACK, WHITE); serial->Print(speedString, BLACK, WHITE);
-
+	printStatus();
+	serial->SetPos(68, 2); serial->Print("Speed:  ", BLACK, WHITE); printSpeed();
+	serial->SetPos(68, 3); serial->Print("Lenght: ", BLACK, WHITE); printLenght();
+	
 	drawBorder('#');
 	draw();
 
@@ -76,10 +73,7 @@ void Snake::move()
 	if ((snakeElement[0].iX == food.iX) && (snakeElement[0].iY == food.iY))
 	{
 		++lenght;
-		
-		char lenghtString[3];
-		sprintf_s(lenghtString, 3, "%2d", lenght);
-		serial->SetPos(76, 1); serial->Print(lenghtString, BLACK, WHITE);
+		printLenght();
 
 		snakeElement[lenght].iX = snakeElement[lenght - 1].iX;
 		snakeElement[lenght].iY = snakeElement[lenght - 1].iY;
@@ -204,11 +198,13 @@ void Snake::changeDir(Direction dir)
 void Snake::pause()
 {
 	state = PAUSED;
+	stateChangedFlag = true;
 }
 
 void Snake::play()
 {
 	state = RUNNING;
+	stateChangedFlag = true;
 }
 
 Status Snake::status()
@@ -260,4 +256,20 @@ void Snake::printSpeed()
 	char speedString[3];
 	sprintf_s(speedString, 3, "%2d", speed);
 	serial->SetPos(76, 2); serial->Print(speedString, BLACK, WHITE);
+}
+
+void Snake::printLenght()
+{
+	char lenghtString[3];
+	sprintf_s(lenghtString, 3, "%2d", lenght);
+	serial->SetPos(76, 3); serial->Print(lenghtString, BLACK, WHITE);
+}
+
+void Snake::printStatus()
+{
+	serial->SetPos(68, 1);
+	if (state == RUNNING)
+		serial->Print("RUNNING", GREEN, BLACK);
+	else if (state == PAUSED)
+		serial->Print("PAUSED", YELLOW, BLACK); serial->Print(' ', BLACK, WHITE);
 }
