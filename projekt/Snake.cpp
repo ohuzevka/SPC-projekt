@@ -40,11 +40,26 @@ void Snake::init()
 	serial->SetPos(68, 2); serial->Print("Speed:  ", BLACK, WHITE); printSpeed();
 	serial->SetPos(68, 3); serial->Print("Lenght: ", BLACK, WHITE); printLenght();
 
-	serial->SetPos(28, 0); serial->Print(R"(   ____          __      )", BLACK, WHITE);
-	serial->SetPos(28, 1); serial->Print(R"(  / __/__  ___ _/ /_____ )", BLACK, WHITE);
-	serial->SetPos(28, 2); serial->Print(R"( _\ \/ _ \/ _ `/  '_/ -_))", BLACK, WHITE);
-	serial->SetPos(28, 3); serial->Print(R"(/___/_//_/\_,_/_/\_\\__/ )", BLACK, WHITE);
-	serial->SetPos(28, 4); serial->Print(R"(                         )", BLACK, WHITE);
+	/*
+	serial->SetPos(26, 0); serial->Print(R"(   ____            __       )", BLACK, WHITE);
+	serial->SetPos(26, 1); serial->Print(R"(  / __/___  ___ _ / /__ ___ )", BLACK, WHITE);
+	serial->SetPos(26, 2); serial->Print(R"( _\ \ / _ \/ _ `//  '_// -_))", BLACK, WHITE);
+	serial->SetPos(26, 3); serial->Print(R"(/___//_//_/\_,_//_/\_\ \__/ )", BLACK, WHITE);
+	*/
+	
+	serial->SetPos(29, 0);    serial->Print(R"(____)", BLACK, GREEN);
+	serial->SetPos(28, 1);   serial->Print(R"(/ __/     ___ _       ___)", BLACK, GREEN);
+	serial->SetPos(27, 2);  serial->Print(R"(_\ \/     / _ `/      / -_))", BLACK, GREEN);
+	serial->SetPos(26, 3); serial->Print(R"(/___/      \_,_/       \__/)", BLACK, GREEN);
+
+	serial->SetPos(33, 1);   serial->Print(R"(___)", BLACK, YELLOW);
+	serial->SetPos(32, 2);  serial->Print(R"(/ _ \)", BLACK, YELLOW);
+	serial->SetPos(31, 3); serial->Print(R"(/_//_/)", BLACK, YELLOW);
+
+	serial->SetPos(45, 0);    serial->Print(R"(__)", BLACK, YELLOW);
+	serial->SetPos(44, 1);   serial->Print(R"(/ /__)", BLACK, YELLOW);
+	serial->SetPos(43, 2);  serial->Print(R"(/  '_/)", BLACK, YELLOW);
+	serial->SetPos(42, 3); serial->Print(R"(/_/\_\)", BLACK, YELLOW);
 	
 	drawBorder('#', WHITE, BLACK);
 	draw();
@@ -224,6 +239,9 @@ void Snake::gameOver()
 	serial->SetPos(68, 1); serial->Print("         ", BLACK, BLACK);
 
 	serial->SetPos(snakeElement[0].iX, snakeElement[0].iY); serial->Print(headChar, BLACK, RED);
+
+	// Terminal bell sound
+	std::cout << '\a' << std::endl;
 	
 	/*
 	serial->SetPos(35, 1); serial->Print("Game Over", RED, BLACK);
