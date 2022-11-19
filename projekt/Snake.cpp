@@ -39,8 +39,14 @@ void Snake::init()
 	printStatus();
 	serial->SetPos(68, 2); serial->Print("Speed:  ", BLACK, WHITE); printSpeed();
 	serial->SetPos(68, 3); serial->Print("Lenght: ", BLACK, WHITE); printLenght();
+
+	serial->SetPos(28, 0); serial->Print(R"(   ____          __      )", BLACK, WHITE);
+	serial->SetPos(28, 1); serial->Print(R"(  / __/__  ___ _/ /_____ )", BLACK, WHITE);
+	serial->SetPos(28, 2); serial->Print(R"( _\ \/ _ \/ _ `/  '_/ -_))", BLACK, WHITE);
+	serial->SetPos(28, 3); serial->Print(R"(/___/_//_/\_,_/_/\_\\__/ )", BLACK, WHITE);
+	serial->SetPos(28, 4); serial->Print(R"(                         )", BLACK, WHITE);
 	
-	drawBorder(' ', RED, BLACK);
+	drawBorder('#', WHITE, BLACK);
 	draw();
 
 	generateFood();
@@ -159,7 +165,7 @@ void Snake::generateFood()
 		}
 	}
 	serial->SetPos(food.iX, food.iY);
-	serial->Print('@', BLACK, YELLOW);
+	serial->Print('@', BLACK, RED);
 }
 
 void Snake::drawBorder(const char character, uint8_t bgColor, uint8_t textColor)
@@ -214,20 +220,24 @@ Status Snake::status()
 
 void Snake::gameOver()
 {
-	
 	state = GAME_OVER;
+	serial->SetPos(68, 1); serial->Print("         ", BLACK, BLACK);
 
-	serial->SetPos(35, 1);
-	serial->Print("Game Over", RED, BLACK);
-	serial->SetPos(29, 2);
-	serial->Print("Press SPACE to restart", RED, BLACK);
+	serial->SetPos(snakeElement[0].iX, snakeElement[0].iY); serial->Print(headChar, BLACK, RED);
 	
 	/*
-	serial->SetPos(0, 0); serial->Print(R"(  ___                           ___                    )", RED, BLACK);
-	serial->SetPos(0, 1); serial->Print(R"( / __|  __ _   _ __    ___     / _ \  __ __  ___   _ _ )", RED, BLACK);
-	serial->SetPos(0, 2); serial->Print(R"(| (_ | / _` | | '  \  / -_)   | (_) | \ V / / -_) | '_|)", RED, BLACK);
-	serial->SetPos(0, 3); serial->Print(R"( \___| \__,_| |_|_|_| \___|    \___/   \_/  \___| |_|  )", RED, BLACK);
+	serial->SetPos(35, 1); serial->Print("Game Over", RED, BLACK);
+	serial->SetPos(29, 2); serial->Print("Press SPACE to restart", RED, BLACK);
 	*/
+	
+	serial->SetPos(17, 0); serial->Print(R"(  _____                   ____                 )", BLACK, RED);
+	serial->SetPos(17, 1); serial->Print(R"( / ___/___ _ __ _  ___   / __ \ _  __ ___  ____)", BLACK, RED);
+	serial->SetPos(17, 2); serial->Print(R"(/ (_ // _ `//  ' \/ -_) / /_/ /| |/ // -_)/ __/)", BLACK, RED);
+	serial->SetPos(17, 3); serial->Print(R"(\___/ \_,_//_/_/_/\__/  \____/ |___/ \__//_/   )", BLACK, RED);
+
+	serial->SetPos(1, 1); serial->Print("            ", BLACK, BLACK);
+	serial->SetPos(1, 2); serial->Print("Press ", BLACK, WHITE); serial->Print(" SPACE ", WHITE, BLACK);
+	serial->SetPos(1, 3); serial->Print("to try again  ", BLACK, WHITE);
 }
 
 void Snake::increaseSpeed()
@@ -269,7 +279,7 @@ void Snake::printStatus()
 {
 	serial->SetPos(68, 1);
 	if (state == RUNNING)
-		serial->Print("RUNNING", GREEN, BLACK);
+		serial->Print(" RUNNING ", GREEN, BLACK);
 	else if (state == PAUSED)
-		serial->Print("PAUSED", YELLOW, BLACK); serial->Print(' ', BLACK, WHITE);
+		serial->Print(" PAUSED ", YELLOW, BLACK); serial->Print(' ', BLACK, WHITE);
 }
