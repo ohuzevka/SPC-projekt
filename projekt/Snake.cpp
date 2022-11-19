@@ -6,7 +6,7 @@ Snake::Snake(SerialTerminal* aSerial)
 {
 	serial = aSerial;
 	state = PAUSED;
-	direction = DOWN;
+	oldDiderction = direction = DOWN;
 
 	border.topPos = 4;
 	border.bottomPos = DISPLAY_HEIGHT;
@@ -82,6 +82,8 @@ void Snake::move()
 		snakeElement[i] = snakeElement[i - 1];
 	}
 	
+	oldDiderction = direction;
+
 	// New head position
 	switch (direction)
 	{
@@ -185,8 +187,8 @@ void Snake::drawBorder(const char character)
 
 void Snake::changeDir(Direction dir)
 {
-	if ((dir == LEFT && direction == RIGHT) || (dir == RIGHT && direction == LEFT) ||
-		(dir == UP && direction == DOWN) || (dir == DOWN && direction == UP))
+	if ((dir == LEFT && oldDiderction == RIGHT) || (dir == RIGHT && oldDiderction == LEFT) ||
+		(dir == UP && oldDiderction == DOWN) || (dir == DOWN && oldDiderction == UP))
 		return;
 	direction = dir;
 }
@@ -208,9 +210,18 @@ Status Snake::status()
 
 void Snake::gameOver()
 {
+	
 	state = GAME_OVER;
+
 	serial->SetPos(35, 1);
 	serial->Print("Game Over", RED, BLACK);
 	serial->SetPos(29, 2);
 	serial->Print("Press SPACE to restart", RED, BLACK);
+	
+	/*
+	serial->SetPos(0, 0); serial->Print(R"(  ___                           ___                    )", RED, BLACK);
+	serial->SetPos(0, 1); serial->Print(R"( / __|  __ _   _ __    ___     / _ \  __ __  ___   _ _ )", RED, BLACK);
+	serial->SetPos(0, 2); serial->Print(R"(| (_ | / _` | | '  \  / -_)   | (_) | \ V / / -_) | '_|)", RED, BLACK);
+	serial->SetPos(0, 3); serial->Print(R"( \___| \__,_| |_|_|_| \___|    \___/   \_/  \___| |_|  )", RED, BLACK);
+	*/
 }

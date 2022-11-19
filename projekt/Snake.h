@@ -38,6 +38,7 @@ class Snake
 	SerialTerminal* serial = nullptr;
 	Position snakeElement[50];
 	Direction direction;
+	Direction oldDiderction;
 	const char headChar = '@';
 	const char bodyChar = 'O';
 	unsigned int score;
