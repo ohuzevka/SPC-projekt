@@ -39,21 +39,25 @@ void callback2(Snake& aSnake, SerialTerminal& aSerial)
 			{
 			case 'w':
 				aSnake.changeDir(UP);
+				aSnake.play();
 				break;
 			case 's':
 				aSnake.changeDir(DOWN);
+				aSnake.play();
 				break;
 			case 'a':
 				aSnake.changeDir(LEFT);
+				aSnake.play();
 				break;
 			case 'd':
 				aSnake.changeDir(RIGHT);
-				break;
-			case 'p':
-				aSnake.pause();
-				break;
-			case 'l':
 				aSnake.play();
+				break;
+			case ' ':
+				if (aSnake.status() == RUNNING)
+					aSnake.pause();
+				else if (aSnake.status() == GAME_OVER)
+					aSnake.init();
 				break;
 			}
 

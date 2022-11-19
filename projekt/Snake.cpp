@@ -8,7 +8,7 @@ Snake::Snake(SerialTerminal* aSerial)
 	state = PAUSED;
 	direction = DOWN;
 
-	border.topPos = 3;
+	border.topPos = 4;
 	border.bottomPos = DISPLAY_HEIGHT;
 	border.leftPos = 0;
 	border.rightPos = DISPLAY_WIDTH;
@@ -31,6 +31,12 @@ void Snake::init()
 	lenght = 3;
 
 	serial->Clear(BLACK);
+
+	serial->SetPos(1, 1);
+	serial->Print("Move:  W,S,A,D", BLACK, WHITE);
+	serial->SetPos(1, 2);
+	serial->Print("Pause: SPACE", BLACK, WHITE);
+
 	drawBorder('#');
 	draw();
 
@@ -202,8 +208,9 @@ Status Snake::status()
 
 void Snake::gameOver()
 {
-	pause();
+	state = GAME_OVER;
 	serial->SetPos(35, 1);
 	serial->Print("Game Over", RED, BLACK);
-
+	serial->SetPos(29, 2);
+	serial->Print("Press SPACE to restart", RED, BLACK);
 }
