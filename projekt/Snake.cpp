@@ -75,6 +75,7 @@ void Snake::move()
 	if ((snakeElement[0].iX == food.iX) && (snakeElement[0].iY == food.iY))
 	{
 		++lenght;
+		
 		char lenghtString[3];
 		sprintf_s(lenghtString, 3, "%d", lenght);
 		serial->SetPos(76, 1); serial->Print(lenghtString, BLACK, WHITE);
