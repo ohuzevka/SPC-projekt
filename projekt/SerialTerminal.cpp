@@ -79,7 +79,7 @@ bool SerialTerminal::Write(uint8_t val[])
 
 		return false;
 	}
-
+	/*
 	try
 	{
 		Read(val[0]);
@@ -97,7 +97,7 @@ bool SerialTerminal::Write(uint8_t val[])
 
 		return false;
 	}
-
+	*/
 	return true;
 }
 
