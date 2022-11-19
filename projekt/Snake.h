@@ -41,8 +41,7 @@ class Snake
 	Direction oldDiderction;
 	const char headChar = '@';
 	const char bodyChar = 'O';
-	unsigned int score;
-	unsigned int speed;
+	uint8_t speed;
 	BorderPos border;
 	Position food;
 	uint8_t type;

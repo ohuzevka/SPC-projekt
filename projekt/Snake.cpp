@@ -1,5 +1,6 @@
+#include <cstdlib>
+#include <stdio.h>
 #include "Snake.h"
-#include<cstdlib>
 #include "SerialTerminal.h"
 
 Snake::Snake(SerialTerminal* aSerial)
@@ -7,6 +8,7 @@ Snake::Snake(SerialTerminal* aSerial)
 	serial = aSerial;
 	state = PAUSED;
 	oldDiderction = direction = DOWN;
+	speed = 1;
 
 	border.topPos = 4;
 	border.bottomPos = DISPLAY_HEIGHT;
@@ -22,13 +24,8 @@ void Snake::init()
 	snakeElement[1].iX = 40;
 	snakeElement[1].iY = 19;
 
-	snakeElement[2].iX = 40;
-	snakeElement[2].iY = 18;
-
-	snakeElement[3].iX = 40;
-	snakeElement[3].iY = 17;
-
-	lenght = 3;
+	oldDiderction = direction = DOWN;
+	lenght = 2;
 
 	serial->Clear(BLACK);
 
@@ -36,6 +33,14 @@ void Snake::init()
 	serial->Print("Move:  W,S,A,D", BLACK, WHITE);
 	serial->SetPos(1, 2);
 	serial->Print("Pause: SPACE", BLACK, WHITE);
+
+	char lenghtString[3];
+	char speedString[3];
+	sprintf_s(lenghtString, 3, "%d", lenght);
+	sprintf_s(speedString, 3, "%d", speed);
+
+	serial->SetPos(68, 1); serial->Print("Lenght: ", BLACK, WHITE); serial->Print(lenghtString, BLACK, WHITE);
+	serial->SetPos(68, 2); serial->Print("Speed:  ", BLACK, WHITE); serial->Print(speedString, BLACK, WHITE);
 
 	drawBorder('#');
 	draw();
@@ -70,6 +75,10 @@ void Snake::move()
 	if ((snakeElement[0].iX == food.iX) && (snakeElement[0].iY == food.iY))
 	{
 		++lenght;
+		char lenghtString[3];
+		sprintf_s(lenghtString, 3, "%d", lenght);
+		serial->SetPos(76, 1); serial->Print(lenghtString, BLACK, WHITE);
+
 		snakeElement[lenght].iX = snakeElement[lenght - 1].iX;
 		snakeElement[lenght].iY = snakeElement[lenght - 1].iY;
 
@@ -106,18 +115,15 @@ void Snake::move()
 
 void Snake::draw()
 {
-	for (uint8_t i = 0; i < lenght; ++i)
+	// Draw head of snake
+	serial->SetPos(snakeElement[0].iX, snakeElement[0].iY);
+	serial->Print(headChar, BLACK, WHITE);
+
+	// Draw body of snake
+	for (uint8_t i = 1; i < lenght; ++i)
 	{
-		if (i == 0)
-		{	// Draw head of snake
-			serial->SetPos(snakeElement[i].iX, snakeElement[i].iY);
-			serial->Print(headChar, BLACK, WHITE);
-		}
-		else
-		{	// Draw body of snake
-			serial->SetPos(snakeElement[i].iX, snakeElement[i].iY);
-			serial->Print(bodyChar, BLACK, WHITE);
-		}
+		serial->SetPos(snakeElement[i].iX, snakeElement[i].iY);
+		serial->Print(bodyChar, BLACK, WHITE);
 	}
 }
 
