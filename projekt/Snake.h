@@ -63,5 +63,10 @@ public:
 	void pause();
 	void play();
 	void gameOver();
+	void increaseSpeed();
+	void decreaseSpeed();
+	uint8_t getSpeed();
+	void printSpeed();
+	bool speedChangedFlag;
 };
 

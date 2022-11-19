@@ -15,11 +15,14 @@ void callback1(Snake& aSnake, SerialTerminal& aSerial)
 {
 	while (1)
 	{
+		if (aSnake.speedChangedFlag == true)
+			aSnake.printSpeed();
+
 		if (aSnake.status() == RUNNING)
 		{
 			aSnake.move();
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000/aSnake.getSpeed()));
 	}
 }
 
@@ -58,6 +61,12 @@ void callback2(Snake& aSnake, SerialTerminal& aSerial)
 					aSnake.pause();
 				else if (aSnake.status() == GAME_OVER)
 					aSnake.init();
+				break;
+			case '+':
+				aSnake.increaseSpeed();
+				break;
+			case '-':
+				aSnake.decreaseSpeed();
 				break;
 			}
 

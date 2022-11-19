@@ -8,9 +8,10 @@ Snake::Snake(SerialTerminal* aSerial)
 	serial = aSerial;
 	state = PAUSED;
 	oldDiderction = direction = DOWN;
-	speed = 1;
+	speed = 10;
+	speedChangedFlag = false;
 
-	border.topPos = 4;
+	border.topPos = 5;
 	border.bottomPos = DISPLAY_HEIGHT;
 	border.leftPos = 0;
 	border.rightPos = DISPLAY_WIDTH;
@@ -29,15 +30,15 @@ void Snake::init()
 
 	serial->Clear(BLACK);
 
-	serial->SetPos(1, 1);
-	serial->Print("Move:  W,S,A,D", BLACK, WHITE);
-	serial->SetPos(1, 2);
-	serial->Print("Pause: SPACE", BLACK, WHITE);
+	serial->SetPos(1, 1); serial->Print("Move:  W,S,A,D", BLACK, WHITE);
+	serial->SetPos(1, 2); serial->Print("Pause: SPACE", BLACK, WHITE);
+	serial->SetPos(1, 3); serial->Print("Speed: +,-", BLACK, WHITE);
+
 
 	char lenghtString[3];
 	char speedString[3];
-	sprintf_s(lenghtString, 3, "%d", lenght);
-	sprintf_s(speedString, 3, "%d", speed);
+	sprintf_s(lenghtString, 3, "%2d", lenght);
+	sprintf_s(speedString, 3, "%2d", speed);
 
 	serial->SetPos(68, 1); serial->Print("Lenght: ", BLACK, WHITE); serial->Print(lenghtString, BLACK, WHITE);
 	serial->SetPos(68, 2); serial->Print("Speed:  ", BLACK, WHITE); serial->Print(speedString, BLACK, WHITE);
@@ -77,7 +78,7 @@ void Snake::move()
 		++lenght;
 		
 		char lenghtString[3];
-		sprintf_s(lenghtString, 3, "%d", lenght);
+		sprintf_s(lenghtString, 3, "%2d", lenght);
 		serial->SetPos(76, 1); serial->Print(lenghtString, BLACK, WHITE);
 
 		snakeElement[lenght].iX = snakeElement[lenght - 1].iX;
@@ -231,4 +232,32 @@ void Snake::gameOver()
 	serial->SetPos(0, 2); serial->Print(R"(| (_ | / _` | | '  \  / -_)   | (_) | \ V / / -_) | '_|)", RED, BLACK);
 	serial->SetPos(0, 3); serial->Print(R"( \___| \__,_| |_|_|_| \___|    \___/   \_/  \___| |_|  )", RED, BLACK);
 	*/
+}
+
+void Snake::increaseSpeed()
+{
+	if (++speed > 99)
+		speed = 99;
+
+	speedChangedFlag = true;
+}
+
+void Snake::decreaseSpeed()
+{
+	if (--speed < 1)
+		speed = 1;
+
+	speedChangedFlag = true;
+}
+
+uint8_t Snake::getSpeed()
+{
+	return speed;
+}
+
+void Snake::printSpeed()
+{
+	char speedString[3];
+	sprintf_s(speedString, 3, "%2d", speed);
+	serial->SetPos(76, 2); serial->Print(speedString, BLACK, WHITE);
 }
