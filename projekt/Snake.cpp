@@ -40,7 +40,7 @@ void Snake::init()
 	serial->SetPos(68, 2); serial->Print("Speed:  ", BLACK, WHITE); printSpeed();
 	serial->SetPos(68, 3); serial->Print("Lenght: ", BLACK, WHITE); printLenght();
 	
-	drawBorder('#');
+	drawBorder(' ', RED, BLACK);
 	draw();
 
 	generateFood();
@@ -113,13 +113,13 @@ void Snake::draw()
 {
 	// Draw head of snake
 	serial->SetPos(snakeElement[0].iX, snakeElement[0].iY);
-	serial->Print(headChar, BLACK, WHITE);
+	serial->Print(headChar, snakeBgColor, snakeTextColor);
 
 	// Draw body of snake
 	for (uint8_t i = 1; i < lenght; ++i)
 	{
 		serial->SetPos(snakeElement[i].iX, snakeElement[i].iY);
-		serial->Print(bodyChar, BLACK, WHITE);
+		serial->Print(bodyChar, snakeBgColor, snakeTextColor);
 	}
 }
 
@@ -127,13 +127,13 @@ void Snake::redraw()
 {
 	// Draw new head of snake
 	serial->SetPos(snakeElement[0].iX, snakeElement[0].iY);
-	serial->Print(headChar, BLACK, WHITE);
+	serial->Print(headChar, snakeBgColor, snakeTextColor);
 
 	// Make the old head a body
 	if (lenght > 1)
 	{
 		serial->SetPos(snakeElement[1].iX, snakeElement[1].iY);
-		serial->Print(bodyChar, BLACK, WHITE);
+		serial->Print(bodyChar, snakeBgColor, snakeTextColor);
 	}
 
 	// Erase the last node of snake
@@ -159,10 +159,10 @@ void Snake::generateFood()
 		}
 	}
 	serial->SetPos(food.iX, food.iY);
-	serial->Print('#', BLACK, RED);
+	serial->Print('@', BLACK, YELLOW);
 }
 
-void Snake::drawBorder(const char character)
+void Snake::drawBorder(const char character, uint8_t bgColor, uint8_t textColor)
 {
 	if (border.leftPos >= border.rightPos || border.topPos >= border.bottomPos)
 		serial->Print("Invalid border dimensions", BLACK, WHITE);
@@ -170,20 +170,20 @@ void Snake::drawBorder(const char character)
 	{
 		serial->SetPos(border.leftPos, border.topPos);
 		for (int i = 0; i <= border.rightPos; i++)	// top
-			serial->Print(character, BLACK, WHITE);
+			serial->Print(character, bgColor, textColor);
 		for (int i = border.topPos + 1; i < border.bottomPos; i++)		// left
 		{
 			serial->SetPos(border.leftPos, i);
-			serial->Print(character, BLACK, WHITE);
+			serial->Print(character, bgColor, textColor);
 		}
 		for (int i = border.topPos + 1; i < border.bottomPos; i++)		// right
 		{
 			serial->SetPos(border.rightPos, i);
-			serial->Print(character, BLACK, WHITE);
+			serial->Print(character, bgColor, textColor);
 		}
 		serial->SetPos(border.leftPos, border.bottomPos);
 		for (int i = 0; i <= border.rightPos; i++)	// bottom
-			serial->Print(character, BLACK, WHITE);
+			serial->Print(character, bgColor, textColor);
 	}
 }
 

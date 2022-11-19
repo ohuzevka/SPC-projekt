@@ -36,11 +36,13 @@ struct BorderPos
 class Snake
 {
 	SerialTerminal* serial = nullptr;
-	Position snakeElement[50];
+	Position snakeElement[100];
 	Direction direction;
 	Direction oldDiderction;
-	const char headChar = '@';
-	const char bodyChar = 'O';
+	const char headChar = 'O';
+	const char bodyChar = 'o';
+	const uint8_t snakeBgColor = BLACK;
+	const uint8_t snakeTextColor = WHITE;
 	uint8_t speed;
 	BorderPos border;
 	Position food;
@@ -53,13 +55,12 @@ public:
 
 	Snake(SerialTerminal* aSerial);
 	void init();
-	void spawn(uint8_t SpawnPosX = 0, uint8_t SpawnPosY = 0);
 	void generateFood();
 	void addElement();
 	void move();
 	void draw();
 	void redraw();
-	void drawBorder(const char character);
+	void drawBorder(const char character, uint8_t bgColor, uint8_t textColor);
 	void changeDir(Direction dir);
 	Status status();
 	void pause();
