@@ -35,10 +35,6 @@ void Snake::init()
 	draw();
 }
 
-void Snake::addElement()
-{
-}
-
 void Snake::move()
 {
 	// Test if it crashed to border
