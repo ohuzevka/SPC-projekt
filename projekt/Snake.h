@@ -58,8 +58,8 @@ public:
 	void generateFood();
 	void addElement();
 	void move();
-	void draw();
-	void redraw();
+	void drawSnake();
+	void redrawSnake();
 	void drawBorder(const char character, uint8_t bgColor, uint8_t textColor);
 	void changeDir(Direction dir);
 	Status status();
@@ -72,5 +72,7 @@ public:
 	void printSpeed();
 	void printLenght();
 	void printStatus();
+	void printFood();
+	void draw();
 };
 

@@ -30,41 +30,9 @@ void Snake::init()
 	oldDiderction = direction = DOWN;
 	lenght = 2;
 
-	serial->Clear(BLACK);
-
-	serial->SetPos(1, 1); serial->Print("Pause: SPACE", BLACK, WHITE);
-	serial->SetPos(1, 2); serial->Print("Speed: +,-", BLACK, WHITE);
-	serial->SetPos(1, 3); serial->Print("Move:  W,S,A,D", BLACK, WHITE);
-
-	printStatus();
-	serial->SetPos(68, 2); serial->Print("Speed:  ", BLACK, WHITE); printSpeed();
-	serial->SetPos(68, 3); serial->Print("Lenght: ", BLACK, WHITE); printLenght();
-
-	/*
-	serial->SetPos(26, 0); serial->Print(R"(   ____            __       )", BLACK, WHITE);
-	serial->SetPos(26, 1); serial->Print(R"(  / __/___  ___ _ / /__ ___ )", BLACK, WHITE);
-	serial->SetPos(26, 2); serial->Print(R"( _\ \ / _ \/ _ `//  '_// -_))", BLACK, WHITE);
-	serial->SetPos(26, 3); serial->Print(R"(/___//_//_/\_,_//_/\_\ \__/ )", BLACK, WHITE);
-	*/
-	
-	serial->SetPos(29, 0);    serial->Print(R"(____)", BLACK, GREEN);
-	serial->SetPos(28, 1);   serial->Print(R"(/ __/     ___ _       ___)", BLACK, GREEN);
-	serial->SetPos(27, 2);  serial->Print(R"(_\ \/     / _ `/      / -_))", BLACK, GREEN);
-	serial->SetPos(26, 3); serial->Print(R"(/___/      \_,_/       \__/)", BLACK, GREEN);
-
-	serial->SetPos(33, 1);   serial->Print(R"(___)", BLACK, YELLOW);
-	serial->SetPos(32, 2);  serial->Print(R"(/ _ \)", BLACK, YELLOW);
-	serial->SetPos(31, 3); serial->Print(R"(/_//_/)", BLACK, YELLOW);
-
-	serial->SetPos(45, 0);    serial->Print(R"(__)", BLACK, YELLOW);
-	serial->SetPos(44, 1);   serial->Print(R"(/ /__)", BLACK, YELLOW);
-	serial->SetPos(43, 2);  serial->Print(R"(/  '_/)", BLACK, YELLOW);
-	serial->SetPos(42, 3); serial->Print(R"(/_/\_\)", BLACK, YELLOW);
-	
-	drawBorder('#', WHITE, BLACK);
-	draw();
-
 	generateFood();
+
+	draw();
 }
 
 void Snake::addElement()
@@ -100,6 +68,7 @@ void Snake::move()
 		snakeElement[lenght].iY = snakeElement[lenght - 1].iY;
 
 		generateFood();
+		printFood();
 	}
 
 	// Shift elements
@@ -127,10 +96,10 @@ void Snake::move()
 		break;
 	}
 
-	redraw();
+	redrawSnake();
 }
 
-void Snake::draw()
+void Snake::drawSnake()
 {
 	// Draw head of snake
 	serial->SetPos(snakeElement[0].iX, snakeElement[0].iY);
@@ -144,7 +113,7 @@ void Snake::draw()
 	}
 }
 
-void Snake::redraw()
+void Snake::redrawSnake()
 {
 	// Draw new head of snake
 	serial->SetPos(snakeElement[0].iX, snakeElement[0].iY);
@@ -179,8 +148,6 @@ void Snake::generateFood()
 				flag = true;
 		}
 	}
-	serial->SetPos(food.iX, food.iY);
-	serial->Print('@', BLACK, RED);
 }
 
 void Snake::drawBorder(const char character, uint8_t bgColor, uint8_t textColor)
@@ -300,4 +267,48 @@ void Snake::printStatus()
 		serial->Print(" RUNNING ", GREEN, BLACK);
 	else if (state == PAUSED)
 		serial->Print(" PAUSED ", YELLOW, BLACK); serial->Print(' ', BLACK, WHITE);
+}
+
+void Snake::printFood()
+{
+	serial->SetPos(food.iX, food.iY);
+	serial->Print('@', BLACK, RED);
+}
+
+void Snake::draw()
+{
+	serial->Clear(BLACK);
+
+	serial->SetPos(1, 1); serial->Print("Pause: SPACE", BLACK, WHITE);
+	serial->SetPos(1, 2); serial->Print("Speed: +,-", BLACK, WHITE);
+	serial->SetPos(1, 3); serial->Print("Move:  W,S,A,D", BLACK, WHITE);
+
+	printStatus();
+	serial->SetPos(68, 2); serial->Print("Speed:  ", BLACK, WHITE); printSpeed();
+	serial->SetPos(68, 3); serial->Print("Lenght: ", BLACK, WHITE); printLenght();
+
+	/*
+	serial->SetPos(26, 0); serial->Print(R"(   ____            __       )", BLACK, WHITE);
+	serial->SetPos(26, 1); serial->Print(R"(  / __/___  ___ _ / /__ ___ )", BLACK, WHITE);
+	serial->SetPos(26, 2); serial->Print(R"( _\ \ / _ \/ _ `//  '_// -_))", BLACK, WHITE);
+	serial->SetPos(26, 3); serial->Print(R"(/___//_//_/\_,_//_/\_\ \__/ )", BLACK, WHITE);
+	*/
+
+	serial->SetPos(29, 0);    serial->Print(R"(____)", BLACK, GREEN);
+	serial->SetPos(28, 1);   serial->Print(R"(/ __/     ___ _       ___)", BLACK, GREEN);
+	serial->SetPos(27, 2);  serial->Print(R"(_\ \/     / _ `/      / -_))", BLACK, GREEN);
+	serial->SetPos(26, 3); serial->Print(R"(/___/      \_,_/       \__/)", BLACK, GREEN);
+
+	serial->SetPos(33, 1);   serial->Print(R"(___)", BLACK, YELLOW);
+	serial->SetPos(32, 2);  serial->Print(R"(/ _ \)", BLACK, YELLOW);
+	serial->SetPos(31, 3); serial->Print(R"(/_//_/)", BLACK, YELLOW);
+
+	serial->SetPos(45, 0);    serial->Print(R"(__)", BLACK, YELLOW);
+	serial->SetPos(44, 1);   serial->Print(R"(/ /__)", BLACK, YELLOW);
+	serial->SetPos(43, 2);  serial->Print(R"(/  '_/)", BLACK, YELLOW);
+	serial->SetPos(42, 3); serial->Print(R"(/_/\_\)", BLACK, YELLOW);
+
+	drawBorder('#', WHITE, BLACK);
+	drawSnake();
+	printFood();
 }
