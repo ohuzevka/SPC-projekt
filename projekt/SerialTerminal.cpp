@@ -1,4 +1,6 @@
 #include <iostream>
+#include <queue>
+#include <mutex>
 #include "SerialTerminal.h"
 
 using std::cout;
@@ -57,7 +59,7 @@ void SerialTerminal::CreateConnection(const char commPort[], DWORD baudRate, BYT
 
 	cout << "Successfully connected to serial port on " << commPort << endl;
 
-	isConnected = true;
+	state = CONNECTED;
 }
 
 bool SerialTerminal::Write(uint8_t val[])
@@ -66,38 +68,22 @@ bool SerialTerminal::Write(uint8_t val[])
 
 	if (!WriteFile(hComm, val, 4, &numberOfBytesWritten, NULL))
 	{
-		isConnected = false;
-		isAlive = false;
+		state = INIT;
 
 		return false;
 	}
 
 	if (numberOfBytesWritten != 4)
 	{
-		isConnected = false;
-		isAlive = false;
+		state = INIT;
 
 		return false;
 	}
-	/*
-	try
-	{
-		Read(val[0]);
-	}
-	catch (SerialTerminalErr err)
-	{
-		if (err == READ_ERR)
-		{
-			isConnected = false;
-			isAlive = false;
-		}
 
-		if (err == NO_RESPONSE)
-			isAlive = false;
-
-		return false;
-	}
-	*/
+	buffer_mutex.lock();
+	buffer.push(val[0]);
+	buffer_mutex.unlock();
+	
 	return true;
 }
 
@@ -224,21 +210,71 @@ bool SerialTerminal::Print(const char* str, uint8_t background, uint8_t text)
 
 bool SerialTerminal::GetStatus()
 {
-	return (isAlive && isConnected);
+	return isConnected;
 }
 
 void SerialTerminal::KeepAlive()
 {
-	if (isConnected)
-	{
-		uint8_t buf[4] = { NOP, EMPTY, EMPTY, CRC };
+	buffer_mutex.lock();
+	while(!buffer.empty())
+		buffer.pop();
+	buffer_mutex.unlock();
 
-		if (!Write(buf))
+	uint8_t buf[4] = { NOP, EMPTY, EMPTY, CRC };
+
+	if(Write(buf))
+	{
+		try
 		{
-			cout << "No response" << endl;
+			Read(NOP);
+		}
+		catch(SerialTerminalErr err)
+		{
+			if(err == READ_ERR)
+				state = INIT;
+
+			if(err == NO_RESPONSE)
+				state = WAIT;
 		}
 	}
-	else
-		cout << "No response" << endl;
 
+	state = RECONNECTED;
+}
+
+void SerialTerminal::CheckResponse()
+{
+	if(!buffer.empty())
+	{
+		buffer_mutex.lock();
+		char val = buffer.front();
+		buffer.pop();
+		buffer_mutex.unlock();
+
+		cout << val << std::flush;
+
+		auto start_time = std::chrono::high_resolution_clock::now();
+
+		try
+		{
+			Read(val);
+			auto end_time = std::chrono::high_resolution_clock::now();
+
+			std::chrono::duration<double> diff = end_time - start_time;
+			cout << " - OK " << diff.count() << endl;
+		}
+		catch(SerialTerminalErr err)
+		{
+			if(err == READ_ERR)
+				state = DISCONNECTED;
+
+			if(err == NO_RESPONSE)
+				state = DISCONNECTED;
+		}
+		state = CONNECTED;
+	}
+}
+
+SerialTerminalState SerialTerminal::GetState()
+{
+	return state;
 }

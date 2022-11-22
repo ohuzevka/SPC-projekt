@@ -1,7 +1,21 @@
 #pragma once
 
+#include <iostream>
+#include <queue>
+#include <mutex>
+
 #include <Windows.h>
 #include "SerialTerminalConstants.h"
+
+enum SerialTerminalState
+{
+	INIT,
+	CONNECTED,
+	DISCONNECTED,
+	RECONNECTED,
+	WAIT,
+	DEINIT
+};
 
 enum SerialTerminalErr
 {
@@ -26,6 +40,12 @@ class SerialTerminal
 	COMMTIMEOUTS comTimeOut;
 
 	size_t actX, actY;
+
+	std::queue<char> buffer;
+
+	std::mutex buffer_mutex;
+
+	SerialTerminalState state;
 
 	bool isConnected;
 
@@ -59,5 +79,9 @@ public:
 	bool GetStatus();
 
 	void KeepAlive();
+
+	void CheckResponse();
+
+	SerialTerminalState GetState();
 };
 

@@ -90,27 +90,45 @@ void callback2(Snake& aSnake, SerialTerminal& aSerial)
 
 void callback3(Snake& aSnake, SerialTerminal& aSerial)
 {
-	size_t retriesCounter = 0;
-
-	while (1)
+	size_t RetriesCounter = 0;
+	while(1)
 	{
-		aSerial.KeepAlive();
-		
-		if (retriesCounter >= RETRIES)
+		switch(aSerial.GetState())
 		{
-			cout << "Connection timeout!" << endl;
+			case INIT:
+				break;
+
+			case RECONNECTED:
+				aSnake.draw();
+
+			case CONNECTED:
+				aSerial.CheckResponse();
+				break;
+
+			case WAIT:
+				++RetriesCounter;
+
+				if(RetriesCounter > RETRIES)
+					; // Quit
+
+				std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+			case DISCONNECTED:
+				aSnake.pause();
+				aSerial.KeepAlive();
+				break;
+			
+			case DEINIT:
+				break;
 		}
-		else
-			std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	}
 }
-
 int main(int argc, char* argv[])
 {
 	SerialTerminal serial;
 	Snake snake(&serial);
 
-	serial.CreateConnection("COM2", CBR_115200, NOPARITY, 8, ONESTOPBIT);
+	serial.CreateConnection("COM9", CBR_115200, NOPARITY, 8, ONESTOPBIT);
 
 	snake.init();
 
