@@ -129,6 +129,7 @@ int main(int argc, char* argv[])
 	Snake snake(&serial);
 
 	serial.CreateConnection("COM9", CBR_115200, NOPARITY, 8, ONESTOPBIT);
+	serial.CreateConnection("COM2", CBR_115200, NOPARITY, 8, ONESTOPBIT);
 
 	snake.init();
 

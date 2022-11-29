@@ -3,6 +3,9 @@
 #include "Snake.h"
 #include "SerialTerminal.h"
 
+#define endlessMode
+//#define mapMode
+
 Snake::Snake(SerialTerminal* aSerial)
 {
 	serial = aSerial;
@@ -11,12 +14,15 @@ Snake::Snake(SerialTerminal* aSerial)
 	speed = 10;
 	speedChangedFlag = false;
 
+#ifdef endlessMode
 	border.topPos = 5;
 	border.bottomPos = DISPLAY_HEIGHT;
 	border.leftPos = 0;
 	border.rightPos = DISPLAY_WIDTH;
+#endif
 }
 
+#ifdef endlessMode
 void Snake::init()
 {
 	state = PAUSED;
@@ -95,6 +101,57 @@ void Snake::move()
 	redrawSnake();
 }
 
+void Snake::drawBorder(const char character, uint8_t bgColor, uint8_t textColor)
+{
+	if (border.leftPos >= border.rightPos || border.topPos >= border.bottomPos)
+		serial->Print("Invalid border dimensions", BLACK, WHITE);
+	else
+	{
+		serial->SetPos(border.leftPos, border.topPos);
+		for (int i = 0; i <= border.rightPos; i++)	// top
+			serial->Print(character, bgColor, textColor);
+		for (int i = border.topPos + 1; i < border.bottomPos; i++)		// left
+		{
+			serial->SetPos(border.leftPos, i);
+			serial->Print(character, bgColor, textColor);
+		}
+		for (int i = border.topPos + 1; i < border.bottomPos; i++)		// right
+		{
+			serial->SetPos(border.rightPos, i);
+			serial->Print(character, bgColor, textColor);
+		}
+		serial->SetPos(border.leftPos, border.bottomPos);
+		for (int i = 0; i <= border.rightPos; i++)	// bottom
+			serial->Print(character, bgColor, textColor);
+	}
+}
+
+void Snake::generateFood()
+{
+	bool flag = true;
+	while (flag == true)
+	{
+		srand((unsigned)time(NULL));
+
+		food.iX = border.leftPos + 1 + ((uint8_t)rand() % (border.rightPos - border.leftPos - 2));
+		food.iY = border.topPos + 1 + ((uint8_t)rand() % (border.bottomPos - border.topPos - 2));
+
+		flag = false;
+		for (uint8_t i = 1; i < lenght; i++)
+		{
+			if (food.iX == snakeElement[i].iX && food.iY == snakeElement[i].iY)
+				flag = true;
+		}
+	}
+}
+
+void Snake::printFood()
+{
+	serial->SetPos(food.iX, food.iY);
+	serial->Print('@', BLACK, RED);
+}
+#endif
+
 void Snake::drawSnake()
 {
 	// Draw head of snake
@@ -125,50 +182,6 @@ void Snake::redrawSnake()
 	// Erase the last node of snake
 	serial->SetPos(snakeElement[lenght].iX, snakeElement[lenght].iY);
 	serial->Print(' ', BLACK, WHITE);
-}
-
-void Snake::generateFood()
-{
-	bool flag = true;
-	while (flag == true)
-	{
-		srand((unsigned)time(NULL));
-
-		food.iX = border.leftPos + 1 + ((uint8_t)rand() % (border.rightPos - border.leftPos - 2));
-		food.iY = border.topPos + 1 + ((uint8_t)rand() % (border.bottomPos - border.topPos - 2));
-
-		flag = false;
-		for (uint8_t i = 1; i < lenght; i++)
-		{
-			if (food.iX == snakeElement[i].iX && food.iY == snakeElement[i].iY)
-				flag = true;
-		}
-	}
-}
-
-void Snake::drawBorder(const char character, uint8_t bgColor, uint8_t textColor)
-{
-	if (border.leftPos >= border.rightPos || border.topPos >= border.bottomPos)
-		serial->Print("Invalid border dimensions", BLACK, WHITE);
-	else
-	{
-		serial->SetPos(border.leftPos, border.topPos);
-		for (int i = 0; i <= border.rightPos; i++)	// top
-			serial->Print(character, bgColor, textColor);
-		for (int i = border.topPos + 1; i < border.bottomPos; i++)		// left
-		{
-			serial->SetPos(border.leftPos, i);
-			serial->Print(character, bgColor, textColor);
-		}
-		for (int i = border.topPos + 1; i < border.bottomPos; i++)		// right
-		{
-			serial->SetPos(border.rightPos, i);
-			serial->Print(character, bgColor, textColor);
-		}
-		serial->SetPos(border.leftPos, border.bottomPos);
-		for (int i = 0; i <= border.rightPos; i++)	// bottom
-			serial->Print(character, bgColor, textColor);
-	}
 }
 
 void Snake::changeDir(Direction dir)
@@ -263,12 +276,6 @@ void Snake::printStatus()
 		serial->Print(" RUNNING ", GREEN, BLACK);
 	else if (state == PAUSED)
 		serial->Print(" PAUSED ", YELLOW, BLACK); serial->Print(' ', BLACK, WHITE);
-}
-
-void Snake::printFood()
-{
-	serial->SetPos(food.iX, food.iY);
-	serial->Print('@', BLACK, RED);
 }
 
 void Snake::draw()
