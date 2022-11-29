@@ -55,7 +55,7 @@ class SerialTerminal
 
 	void Write(uint8_t val[], DWORD number);
 
-	void Read(uint8_t* val);
+	bool Read(uint8_t* val);
 
 	void Read(char val);
 
@@ -78,7 +78,7 @@ public:
 
 	bool GetStatus();
 
-	void KeepAlive();
+	void CheckConnection();
 
 	void CheckResponse();
 

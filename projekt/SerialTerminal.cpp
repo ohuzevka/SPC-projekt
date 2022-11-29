@@ -66,16 +66,19 @@ bool SerialTerminal::Write(uint8_t val[])
 {
 	DWORD numberOfBytesWritten;
 
+	if(state != CONNECTED && state != RECONNECTED && val[0] != NOP)
+		return false;
+
 	if (!WriteFile(hComm, val, 4, &numberOfBytesWritten, NULL))
 	{
-		state = INIT;
+		state = DEINIT;
 
 		return false;
 	}
 
 	if (numberOfBytesWritten != 4)
 	{
-		state = INIT;
+		state = DEINIT;
 
 		return false;
 	}
@@ -92,21 +95,23 @@ void SerialTerminal::Write(uint8_t val[], DWORD number)
 	DWORD numberOfBytesWritten;
 
 	if (WriteFile(hComm, val, number, &numberOfBytesWritten, NULL))
-		throw WRITE_ERR;
+		throw DEINIT;
 
 	if (numberOfBytesWritten != number)
-		throw WRITE_ERR;
+		throw DEINIT;
 }
 
-void SerialTerminal::Read(uint8_t* val)
+bool SerialTerminal::Read(uint8_t* val)
 {
 	DWORD numberOfBytesReaded;
 
 	if(!ReadFile(hComm, val, 1, &numberOfBytesReaded, NULL))
-		throw READ_ERR;
+		return false;
 
-	if (numberOfBytesReaded != 1)
-		throw READ_ERR;
+	if(numberOfBytesReaded != 1)
+		return false;
+
+	return true;
 }
 
 void SerialTerminal::Read(char val)
@@ -213,8 +218,9 @@ bool SerialTerminal::GetStatus()
 	return isConnected;
 }
 
-void SerialTerminal::KeepAlive()
+void SerialTerminal::CheckConnection()
 {
+	// Init receive buffer
 	buffer_mutex.lock();
 	while(!buffer.empty())
 		buffer.pop();
@@ -224,21 +230,27 @@ void SerialTerminal::KeepAlive()
 
 	if(Write(buf))
 	{
+		state = RECONNECTED;
 		try
 		{
-			Read(NOP);
+			buffer_mutex.lock();
+			char val = buffer.front();
+			buffer.pop();
+			buffer_mutex.unlock();
+
+			Read(val);
 		}
 		catch(SerialTerminalErr err)
 		{
 			if(err == READ_ERR)
-				state = INIT;
+				state = WAIT;
 
 			if(err == NO_RESPONSE)
 				state = WAIT;
+
+			cout << "No respose" << endl;
 		}
 	}
-
-	state = RECONNECTED;
 }
 
 void SerialTerminal::CheckResponse()
@@ -254,6 +266,8 @@ void SerialTerminal::CheckResponse()
 
 		auto start_time = std::chrono::high_resolution_clock::now();
 
+		state = CONNECTED;
+
 		try
 		{
 			Read(val);
@@ -264,13 +278,14 @@ void SerialTerminal::CheckResponse()
 		}
 		catch(SerialTerminalErr err)
 		{
+			cout << " - ERROR" << endl;
+
 			if(err == READ_ERR)
 				state = DISCONNECTED;
 
 			if(err == NO_RESPONSE)
 				state = DISCONNECTED;
 		}
-		state = CONNECTED;
 	}
 }
 

@@ -15,23 +15,26 @@ void callback1(Snake& aSnake, SerialTerminal& aSerial)
 {
 	while (1)
 	{
-		if (aSnake.speedChangedFlag == true)
+		if(aSerial.GetState() == CONNECTED)
 		{
-			aSnake.printSpeed();
-			aSnake.speedChangedFlag = false;
-		}
+			if (aSnake.speedChangedFlag == true)
+			{
+				aSnake.printSpeed();
+				aSnake.speedChangedFlag = false;
+			}
 
-		if (aSnake.stateChangedFlag == true)
-		{
-			aSnake.printStatus();
-			aSnake.stateChangedFlag = false;
-		}
+			if (aSnake.stateChangedFlag == true)
+			{
+				aSnake.printStatus();
+				aSnake.stateChangedFlag = false;
+			}
 
-		if (aSnake.status() == RUNNING)
-		{
-			aSnake.move();
+			if (aSnake.status() == RUNNING)
+			{
+				aSnake.move();
+			}
+			std::this_thread::sleep_for(std::chrono::milliseconds(1000/aSnake.getSpeed()));
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000/aSnake.getSpeed()));
 	}
 }
 
@@ -99,6 +102,7 @@ void callback3(Snake& aSnake, SerialTerminal& aSerial)
 				break;
 
 			case RECONNECTED:
+				aSerial.Clear(BLACK);
 				aSnake.draw();
 
 			case CONNECTED:
@@ -115,10 +119,12 @@ void callback3(Snake& aSnake, SerialTerminal& aSerial)
 
 			case DISCONNECTED:
 				aSnake.pause();
-				aSerial.KeepAlive();
+				aSerial.CheckConnection();
 				break;
 			
 			case DEINIT:
+				cout << "Serial port disconnected!" << endl;
+				exit(-1);
 				break;
 		}
 	}
