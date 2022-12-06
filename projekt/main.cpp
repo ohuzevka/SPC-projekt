@@ -103,11 +103,7 @@ void callback2(Snake& aSnake, SerialTerminal& aSerial)
 void callback3(Snake& aSnake, SerialTerminal& aSerial)
 {
 	size_t RetriesCounter = 0;
-<<<<<<< Updated upstream
-	while(aSerial.GetState() != CLOSED)
-=======
 	while(aSnake.status() != QUIT)
->>>>>>> Stashed changes
 	{
 		switch(aSerial.GetState())
 		{
