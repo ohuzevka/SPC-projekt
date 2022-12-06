@@ -16,7 +16,9 @@ enum Status
 {
 	PAUSED,
 	RUNNING,
-	GAME_OVER
+	GAME_OVER,
+	QUIT_Q,
+	QUIT
 };
 
 struct Position	// Position on terminal
@@ -68,6 +70,8 @@ public:
 	Status status();
 	void pause();
 	void play();
+	void quit_q();
+	void quit();
 	void increaseSpeed();
 	void decreaseSpeed();
 	uint8_t getSpeed();

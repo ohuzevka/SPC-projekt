@@ -11,7 +11,7 @@ using std::endl;
 
 void callback1(Snake& aSnake, SerialTerminal& aSerial)
 {
-	while (1)
+	while (aSnake.status() != QUIT)
 	{
 		auto start_time = std::chrono::high_resolution_clock::now();
 
@@ -49,7 +49,7 @@ void callback2(Snake& aSnake, SerialTerminal& aSerial)
 	HANDLE hIn = GetStdHandle(STD_INPUT_HANDLE);
 	INPUT_RECORD InRec;
 
-	while (1)
+	while (aSnake.status() != QUIT)
 	{
 		DWORD numberRec;
 		ReadConsoleInput(hIn, &InRec, 1, &numberRec);
@@ -90,6 +90,9 @@ void callback2(Snake& aSnake, SerialTerminal& aSerial)
 			case '-':
 				aSnake.decreaseSpeed();
 				break;
+			case 'q':
+					aSnake.quit();
+				break;
 			}
 
 			numberRec = 0;
@@ -100,7 +103,11 @@ void callback2(Snake& aSnake, SerialTerminal& aSerial)
 void callback3(Snake& aSnake, SerialTerminal& aSerial)
 {
 	size_t RetriesCounter = 0;
+<<<<<<< Updated upstream
 	while(aSerial.GetState() != CLOSED)
+=======
+	while(aSnake.status() != QUIT)
+>>>>>>> Stashed changes
 	{
 		switch(aSerial.GetState())
 		{

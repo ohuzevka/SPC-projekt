@@ -191,6 +191,18 @@ void Snake::play()
 	stateChangedFlag = true;
 }
 
+void Snake::quit_q()
+{
+	state = QUIT_Q;
+	stateChangedFlag = true;
+}
+
+void Snake::quit()
+{
+	state = QUIT;
+	stateChangedFlag = true;
+}
+
 Status Snake::status()
 {
 	return state;
@@ -259,10 +271,21 @@ void Snake::printLenght()
 void Snake::printStatus()
 {
 	serial->SetPos(68, 1);
-	if (state == RUNNING)
+	switch (state)
+	{
+	case RUNNING:
 		serial->Print(" RUNNING ", GREEN, BLACK);
-	else if (state == PAUSED)
+		break;
+	case PAUSED:
 		serial->Print(" PAUSED ", YELLOW, BLACK); serial->Print(' ', BLACK, WHITE);
+		break;
+	case QUIT_Q:
+		serial->Print(" QUIT ? ", RED, BLACK); serial->Print(' ', BLACK, WHITE);
+		break;
+	case QUIT:
+		serial->Print(" QUIT ", RED, BLACK); serial->Print('   ', BLACK, WHITE);
+		break;
+	}
 }
 
 void Snake::printFood()
