@@ -62,6 +62,13 @@ void SerialTerminal::CreateConnection(const char commPort[], DWORD baudRate, BYT
 	state = CONNECTED;
 }
 
+void SerialTerminal::CloseConnection()
+	{
+	CloseHandle(hComm);
+	cout << "Serial port closed!" << endl;
+	state = CLOSED;
+	}
+
 bool SerialTerminal::Write(uint8_t val[])
 {
 	DWORD numberOfBytesWritten;
@@ -262,23 +269,28 @@ void SerialTerminal::CheckResponse()
 		buffer.pop();
 		buffer_mutex.unlock();
 
+#ifdef SERIAL_DEBUG
 		cout << val << std::flush;
-
 		auto start_time = std::chrono::high_resolution_clock::now();
+#endif
 
 		state = CONNECTED;
 
 		try
 		{
 			Read(val);
+#ifdef SERIAL_DEBUG
 			auto end_time = std::chrono::high_resolution_clock::now();
 
 			std::chrono::duration<double> diff = end_time - start_time;
 			cout << " - OK " << diff.count() << endl;
+#endif
 		}
 		catch(SerialTerminalErr err)
 		{
+#ifdef SERIAL_DEBUG
 			cout << " - ERROR" << endl;
+#endif
 
 			if(err == READ_ERR)
 				state = DISCONNECTED;

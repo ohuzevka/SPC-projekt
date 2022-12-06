@@ -1,6 +1,8 @@
 #pragma once
 
-#define RETRIES 5
+//#define SERIAL_DEBUG
+
+#define RETRIES 10
 
 #define DISPLAY_WIDTH 79
 #define DISPLAY_HEIGHT 39

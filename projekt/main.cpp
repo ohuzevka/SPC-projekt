@@ -9,12 +9,12 @@
 using std::cout;
 using std::endl;
 
-//bool stopRequest = false;
-
 void callback1(Snake& aSnake, SerialTerminal& aSerial)
 {
 	while (1)
 	{
+		auto start_time = std::chrono::high_resolution_clock::now();
+
 		if(aSerial.GetState() == CONNECTED)
 		{
 			if (aSnake.speedChangedFlag == true)
@@ -33,7 +33,13 @@ void callback1(Snake& aSnake, SerialTerminal& aSerial)
 			{
 				aSnake.move();
 			}
-			std::this_thread::sleep_for(std::chrono::milliseconds(1000/aSnake.getSpeed()));
+
+			auto end_time = std::chrono::high_resolution_clock::now();
+			std::chrono::duration<double> diff = end_time - start_time;
+
+			double remaining = (1000 / aSnake.getSpeed()) - diff.count();
+			if(remaining > 0)
+				std::this_thread::sleep_for(std::chrono::milliseconds(uint8_t(remaining)));
 		}
 	}
 }
@@ -94,7 +100,7 @@ void callback2(Snake& aSnake, SerialTerminal& aSerial)
 void callback3(Snake& aSnake, SerialTerminal& aSerial)
 {
 	size_t RetriesCounter = 0;
-	while(1)
+	while(aSerial.GetState() != CLOSED)
 	{
 		switch(aSerial.GetState())
 		{
@@ -113,7 +119,7 @@ void callback3(Snake& aSnake, SerialTerminal& aSerial)
 				++RetriesCounter;
 
 				if(RetriesCounter > RETRIES)
-					; // Quit
+					;
 
 				std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
@@ -123,8 +129,6 @@ void callback3(Snake& aSnake, SerialTerminal& aSerial)
 				break;
 			
 			case DEINIT:
-				cout << "Serial port disconnected!" << endl;
-				exit(-1);
 				break;
 		}
 	}

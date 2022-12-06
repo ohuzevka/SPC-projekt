@@ -14,7 +14,8 @@ enum SerialTerminalState
 	DISCONNECTED,
 	RECONNECTED,
 	WAIT,
-	DEINIT
+	DEINIT,
+	CLOSED
 };
 
 enum SerialTerminalErr
@@ -63,6 +64,8 @@ public:
 	SerialTerminal();
 
 	void CreateConnection(const char aCommPort[], DWORD aBaudRate, BYTE aParity, BYTE aByteSize, BYTE aStopBits);
+
+	void CloseConnection();
 
 	bool Clear();
 
