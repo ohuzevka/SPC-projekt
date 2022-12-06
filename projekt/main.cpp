@@ -134,8 +134,15 @@ int main(int argc, char* argv[])
 	SerialTerminal serial;
 	Snake snake(&serial);
 
-	serial.CreateConnection("COM9", CBR_115200, NOPARITY, 8, ONESTOPBIT);
-
+	char port[6];
+	std::cout << "Enter serial port: ";
+	while (serial.GetState() != CONNECTED)
+	{
+		std::cin >> port;
+		try { serial.CreateConnection(port, CBR_115200, NOPARITY, 8, ONESTOPBIT); }
+		catch (...) { std::cout << "Invalid port, try again: "; }
+	}
+	
 	snake.init();
 
 	std::thread thread1(callback1, std::ref(snake), std::ref(serial));
