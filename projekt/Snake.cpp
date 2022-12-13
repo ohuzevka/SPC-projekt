@@ -315,7 +315,7 @@ void Snake::draw()
 
 	serial->SetPos(29, 0);    serial->Print(R"(____)", BLACK, GREEN);
 	serial->SetPos(28, 1);   serial->Print(R"(/ __/     ___ _       ___)", BLACK, GREEN);
-	serial->SetPos(27, 2);  serial->Print(R"(_\ \/     / _ `/      / -_))", BLACK, GREEN);
+	serial->SetPos(27, 2);  serial->Print(R"(_\ \      / _ `/      / -_))", BLACK, GREEN);
 	serial->SetPos(26, 3); serial->Print(R"(/___/      \_,_/       \__/)", BLACK, GREEN);
 
 	serial->SetPos(33, 1);   serial->Print(R"(___)", BLACK, YELLOW);
