@@ -152,6 +152,18 @@ int main(int argc, char* argv[])
 	
 	snake.init();
 
+	std::cout << R"(   ____            __       )" << std::endl;
+	std::cout << R"(  / __/___  ___ _ / /__ ___ )" << std::endl;
+	std::cout << R"( _\ \ / _ \/ _ `//  '_// -_))" << std::endl;
+	std::cout << R"(/___//_//_/\_,_//_/\_\ \__/ )" << std::endl;				
+	std::cout << "===============" << std::endl;
+	std::cout << "Controls:" << std::endl;
+	std::cout << "Pause: SPACE" << std::endl;
+	std::cout << "Speed: +,-" << std::endl;
+	std::cout << "Move:  W,S,A,D" << std::endl;
+	std::cout << "Quit:  Q" << std::endl;
+	std::cout << "===============" << std::endl;
+
 	std::thread thread1(callback1, std::ref(snake), std::ref(serial));
 	std::thread thread2(callback2, std::ref(snake), std::ref(serial));
 	std::thread thread3(callback3, std::ref(snake), std::ref(serial));
