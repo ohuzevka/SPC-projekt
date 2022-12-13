@@ -11,6 +11,13 @@ SerialTerminal::SerialTerminal()
 	;
 }
 
+SerialTerminal::~SerialTerminal()
+	{
+	CloseHandle(hComm);
+	cout << "Serial port closed." << endl;
+	state = CLOSED;;
+	}
+
 void SerialTerminal::CreateConnection(const char commPort[], DWORD baudRate, BYTE parity, BYTE byteSize, BYTE stopBits)
 {
 	cout << "Creating connection to serial port on " << commPort << endl;

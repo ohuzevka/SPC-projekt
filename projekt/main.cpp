@@ -121,8 +121,12 @@ void callback3(Snake& aSnake, SerialTerminal& aSerial)
 			case WAIT:
 				++RetriesCounter;
 
-				if(RetriesCounter > RETRIES)
-					;
+				if(RetriesCounter >= RETRIES && RETRIES > 0)
+					{
+					cout << "No response from serial terminal!\nPress any key to close this window." << endl;
+					aSnake.quit();
+					continue;
+					}
 
 				std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
@@ -132,6 +136,7 @@ void callback3(Snake& aSnake, SerialTerminal& aSerial)
 				break;
 			
 			case DEINIT:
+				aSnake.quit();
 				break;
 		}
 	}

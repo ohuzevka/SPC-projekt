@@ -63,6 +63,8 @@ class SerialTerminal
 public:
 	SerialTerminal();
 
+	virtual ~SerialTerminal();
+
 	void CreateConnection(const char aCommPort[], DWORD aBaudRate, BYTE aParity, BYTE aByteSize, BYTE aStopBits);
 
 	void CloseConnection();
